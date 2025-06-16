@@ -1,3 +1,36 @@
 import tkinter as tk
 from tkinter import *
 root=tk.Tk()
+root.state("zoomed")
+root.title("Test")
+root.columnconfigure(0,weight=1)
+root.columnconfigure(1,weight=1)
+root.columnconfigure(2,weight=1)
+root.columnconfigure(3,weight=1)
+root.columnconfigure(4,weight=1)
+root.columnconfigure(5,weight=1)
+root.columnconfigure(6,weight=1)
+
+root.rowconfigure(0,weight=1)
+root.rowconfigure(1,weight=1)
+root.rowconfigure(2,weight=1)
+root.rowconfigure(3,weight=1)
+root.rowconfigure(4,weight=1)
+root.rowconfigure(5,weight=1)
+root.rowconfigure(6,weight=1)
+
+
+def phno():
+     a=e1.get()
+     b=e2.get()
+     print(a,b)
+l1=Label(root,text="phone number:")
+l1.grid(column=2,row=0,padx=5,pady=5,sticky='se')
+l2=Label(root,text="password:")
+l2.grid(column=2,row=1,padx=5,pady=5,sticky='ne')
+e1=Entry(root)
+e1.grid(column=3,row=0,padx=5,pady=5,sticky='s')
+e2=Entry(root,show='*')
+e2.grid(column=3,row=1,padx=5,pady=5,sticky='n')
+b1=Button(root,text="submit",command=phno).grid(column=3,row=2,sticky='nwe')
+root.mainloop()
