@@ -21,17 +21,39 @@ f=font=('MT',20, "bold")
 def sub(): #function for receiving phno and pass
      a=e1.get()
      b=e2.get()
+<<<<<<< HEAD
      
+=======
+     select='SELECT * FROM user WHERE phno="{}" AND passwd="{}"'.format(a,b)
+     mycur.execute(select)
+     login=mycur.fetchone()
+     if login!=None:
+          print("successfull")
+   #Destroys all widgets in a given frame
+          for widget in fre.winfo_children():
+               widget.destroy()
+               signup.destroy()
+          fre.destroy()
+          root.title("Car dealership and Servicing")
+     else:
+          incorrect=CTkLabel(fr,text="incorrect phone nunber or password")
+          incorrect.grid(column=0,row=3,columnspan=2,sticky='e')
+          
+          
+>>>>>>> 8b27b2e38076ed1c292353f640eca5657c3493b3
      if a=="00" and b=="admin":
           adminwin=ctk.CTkToplevel(root)
           adminwin.state("zoomed")
           adminwin.title("Admin Window")
+<<<<<<< HEAD
      
      else:
    #Destroys all widgets in a given frame
           for widget in fr.winfo_children():
                widget.destroy()
                signup.destroy()
+=======
+>>>>>>> 8b27b2e38076ed1c292353f640eca5657c3493b3
 def destroy(): #cancelling window fnc
      root.destroy()
 def creation(): #new registering window for new comers
@@ -114,10 +136,18 @@ e2=CTkEntry(fr,show='*')
 e2.grid(column=1,row=1,columnspan=2,padx=5,pady=5,sticky='wne')
 
 b1=CTkButton(fr,text="Submit",command=sub).grid(column=1,row=2,sticky='n')
+<<<<<<< HEAD
 b2=CTkButton(fr,text="Cancel",command=destroy).grid(column=2,row=2,sticky='wn')
+=======
+b2=CTkButton(fr,text="Cancel",command=destroy).grid(column=2,row=2,sticky='n')
+>>>>>>> 8b27b2e38076ed1c292353f640eca5657c3493b3
 
 signup=CTkButton(root,text="Create an Account",command=creation,fg_color="transparent",font=('segoe ui',13,'underline'))
 signup.place(rely=0.5,relx=0.5,anchor="center")
 
 root.mainloop()
+<<<<<<< HEAD
 mycon.close()
+=======
+mycon.close()
+>>>>>>> 8b27b2e38076ed1c292353f640eca5657c3493b3
