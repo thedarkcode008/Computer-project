@@ -138,10 +138,16 @@ def buycar():
      ctk.CTkLabel(tframe2, text="Select Payment Method:", font=("Arial", 16)).grid(row=0,column=2,pady=10)
      m=0
      for method in payment_methods:
-          var=ctk.CTkRadioButton(tframe2, text=method, variable=selected_payment, value=method)
-          var.grid(column=m,row=1,padx=5)
+          payment_=ctk.CTkRadioButton(tframe2, text=method, variable=selected_payment, value=method)
+          payment_.grid(column=m,row=1,padx=5)
           m=m+1
-
+     
+     #cancel function
+     def cancellation():
+          root.deiconify()      # Show the root window again
+          root.state('zoomed')
+          root1.destroy()
+          
      # Submit Function
      def submit():
           summary = f"""
@@ -152,12 +158,23 @@ def buycar():
           """
           messagebox.showinfo("Purchase Summary", summary)
           
+          x1=my_var.get()
+          x2=selected_vehicle.get()
+          x3=selected_color.get()
+          x4=selected_variant.get()
+          x5=selected_payment.get()
+          insert = "INSERT INTO car_purchase (phno, car_name, color, variant, payment) VALUES (%s, %s, %s, %s, %s)"
+          mycur.execute(insert, (x1, x2, x3, x4, x5))
+          
           root.deiconify()      # Show the root window again
           root.state('zoomed')
           root1.destroy()
 
      # Submit Button
-     ctk.CTkButton(tframe2, text="Place Order", command=submit,font=("Arial", 16,"bold")).grid(row=2,column=2,pady=40)
+     ctk.CTkButton(tframe2, text="Place Order", command=submit,font=("Arial", 16,"bold")).grid(row=2,column=2,pady=10)
+     
+     #cancel button
+     ctk.CTkButton(tframe2, text="Cancel", command=cancellation,font=("Arial", 16,"bold")).grid(row=3,column=2,pady=10)
 
      # Run the GUI
      root.mainloop()
@@ -216,7 +233,6 @@ def creation(): #new registering window for new comers
           x7=eemail.get()
           x='insert into user(phno,passwd,First_Name,Last_Name,address,sec_phno,email) values("{}","{}","{}","{}","{}","{}","{}")'.format(x1,x2,x3,x4,x5,x6,x7)
           mycur.execute(x)
-          mycon.commit()
           window1.destroy()     # Close the new window
           root.deiconify()      # Show the root window again
           root.state('zoomed')
@@ -263,11 +279,12 @@ def creation(): #new registering window for new comers
      esec_phno.grid(column=1,row=6,columnspan=2,padx=5,pady=5,sticky='we')
      
      
-
+my_var=ctk.StringVar()
 l1=CTkLabel(fr,text="Phone Number:",font=f)
 l1.grid(column=0,row=0,padx=5,pady=5,sticky='es')
-e1=CTkEntry(fr)
+e1=CTkEntry(fr,textvariable=my_var)
 e1.grid(column=1,row=0,columnspan=2,padx=5,pady=5,sticky='wse')
+
 
 l2=CTkLabel(fr,text="Password:",font=f)
 l2.grid(column=0,row=1,padx=5,pady=5,sticky='wn')
@@ -281,4 +298,5 @@ signup=CTkButton(root,text="Create an Account",command=creation,fg_color="transp
 signup.place(rely=0.5,relx=0.5,anchor="center")
 
 root.mainloop()
+mycon.commit()
 mycon.close()
