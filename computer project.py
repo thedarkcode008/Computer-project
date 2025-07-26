@@ -4,6 +4,7 @@ mycur=mycon.cursor()
 import customtkinter as ctk #importing everything from tkinter
 from customtkinter import *
 from tkinter import messagebox
+import random
 #creating main window
 root=ctk.CTk()
 root.title("Sign Up")
@@ -148,6 +149,10 @@ def buycar():
           root.state('zoomed')
           root1.destroy()
           
+     mycur.execute("SELECT Purchase_no FROM car_purchase ORDER BY Purchase_no DESC LIMIT 1")
+     last_row = mycur.fetchone()
+     a=int(last_row[0])+1
+          
      # Submit Function
      def submit():
           summary = f"""
@@ -155,30 +160,27 @@ def buycar():
           Color: {selected_color.get()}
           Variant: {selected_variant.get()}
           Payment Method: {selected_payment.get()}
+          Purchase number: {a}
           """
           messagebox.showinfo("Purchase Summary", summary)
-          
+          x=a
           x1=my_var.get()
           x2=selected_vehicle.get()
           x3=selected_color.get()
           x4=selected_variant.get()
           x5=selected_payment.get()
-          insert = "INSERT INTO car_purchase (phno, car_name, color, variant, payment) VALUES (%s, %s, %s, %s, %s)"
-          mycur.execute(insert, (x1, x2, x3, x4, x5))
-          
+          insert = "INSERT INTO car_purchase (Purchase_no,phno, car_name, color, variant, payment) VALUES({},'{}','{}','{}','{}','{}')".format(x,x1,x2,x3,x4,x5)
+          mycur.execute(insert)
           root.deiconify()      # Show the root window again
           root.state('zoomed')
-          root1.destroy()
+          root1.destroy() 
 
      # Submit Button
      ctk.CTkButton(tframe2, text="Place Order", command=submit,font=("Arial", 16,"bold")).grid(row=2,column=2,pady=10)
      
      #cancel button
      ctk.CTkButton(tframe2, text="Cancel", command=cancellation,font=("Arial", 16,"bold")).grid(row=3,column=2,pady=10)
-
-     # Run the GUI
-     root.mainloop()
-
+     
 
 
 def sub(): #function for receiving phno and pass
