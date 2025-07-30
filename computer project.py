@@ -26,18 +26,99 @@ def buycar():
      root1.title("Car Buying Portal")
      root1.state("zoomed")
      
-     # Sample data
-     Tata = ["Nexon","Altroz","Harrier","Safari","Punch","Tiago","Tigor","Harrier.ev","Punch.ev","Nexon.ev","Tiago.ev","Tigor.ev","Curvv.ev"]
-     Suzuki = ["Ignis","Swift","Dzire","Fronx","Brezza","Grand Vitara","Espresso","Celerio","Alto","Baleno","Ertiga","XL6","Invicto","Eeco","WagonR","Jimny"]
-     Mahindra = ["BE 6","XEV 9e","XUV 400","XUV 3XO","XUV 700","Bolero","Scorpio","Thar","Thar Roxx","Bolero neo","Scorpio N"]
-     Hyundai = ["Alcazar","Creta","Eon","Exter","Ioniq 5","Verna","Venue","Tucson","Aura","i10","i20"]
-     Kia = ["Carnival","Seltos","Sonet","Carens","EV 6","EV 9","Carens Clavis"]
-     Citroen = ["C3","C5","Aircross","Basalt","eC3"]
-     Volkswagen = ["Virtus", "Taigun", "Golf GTI","Tiguan"]
-     Skoda = ["Kushaq", "Slavia", "Kodiaq", "Kylaq"]
-     Honda = ["City", "Amaze", "Elevate"]
-     Toyota = ["Urban Cruiser Hyryder", "Innova Hycross", "Fortuner", "Fortuner Legender", "Glanza", "Vellfire", "Hilux"]
+     #sample data of list of cars
+     
+     #1.Tata
+     mycur.execute("SELECT Car FROM tata")
+     z1 = mycur.fetchall()
+     # Extract car names as a flat list
+     Tata = [row[0] for row in z1]
+     
+     #2.Suzuki
+     mycur.execute("SELECT Car FROM suzuki")
+     z2 = mycur.fetchall()
+     # Extract car names as a flat list
+     Suzuki = [row[0] for row in z2]
+     
+     #3.Mahindra
+     mycur.execute("SELECT Car FROM mahindra")
+     z3 = mycur.fetchall()
+     # Extract car names as a flat list
+     Mahindra = [row[0] for row in z3]
+     
+     #4.Hyundai
+     mycur.execute("SELECT Car FROM hyundai")
+     z4 = mycur.fetchall()
+     # Extract car names as a flat list
+     Hyundai = [row[0] for row in z4]
+     
+     #5.Kia
+     mycur.execute("SELECT Car FROM kia")
+     z5 = mycur.fetchall()
+     # Extract car names as a flat list
+     Kia = [row[0] for row in z5]
+     
+     #6.Citroen
+     mycur.execute("SELECT Car FROM citroen")
+     z3 = mycur.fetchall()
+     # Extract car names as a flat list
+     Citroen = [row[0] for row in z3]
+     
+     #7.Volkswagen
+     mycur.execute("SELECT Car FROM volkswagen")
+     z7 = mycur.fetchall()
+     # Extract car names as a flat list
+     Volkswagen = [row[0] for row in z7]
+     
+     #8.Skoda
+     mycur.execute("SELECT Car FROM skoda")
+     z8 = mycur.fetchall()
+     # Extract car names as a flat list
+     Skoda = [row[0] for row in z8]
+     
+     #9.Honda
+     mycur.execute("SELECT Car FROM honda")
+     z8 = mycur.fetchall()
+     # Extract car names as a flat list
+     Honda = [row[0] for row in z8]
+     
+     #10.Toyota
+     mycur.execute("SELECT Car FROM toyota")
+     z10 = mycur.fetchall()
+     # Extract car names as a flat list
+     Toyota = [row[0] for row in z10]
+     
+     selected_company = ctk.StringVar(value="Tata")
+     companychange=0
+     def select_from_tata(car):
+          selected_company.set("tata")
 
+     def select_from_suzuki(car):
+          selected_company.set("suzuki")
+
+     def select_from_mahindra(car):
+          selected_company.set("mahindra")
+
+     def select_from_hyundai(car):
+          selected_company.set("hyundai")
+
+     def select_from_kia(car):
+          selected_company.set("kia")
+
+     def select_from_citroen(car):
+          selected_company.set("citroen")
+
+     def select_from_volkswagen(car):
+          selected_company.set("volkswagen")
+
+     def select_from_skoda(car):
+          selected_company.set("skoda")
+
+     def select_from_honda(car):
+          selected_company.set("honda")
+
+     def select_from_toyota(car):
+          selected_company.set("toyota")
 
      colors = ["Red", "Blue", "Black", "White", "Silver"]
      variants = ["Base", "Mid", "Top"]
@@ -55,7 +136,7 @@ def buycar():
 
      #creating a transparent frame to arrange vehices,colors and variant
      tframe1=CTkFrame(root1,width=400,height=100,fg_color="transparent")
-     tframe1.place(relx=0.5,rely=0.3,anchor='center')
+     tframe1.place(relx=0.5,rely=0.4,anchor='center')
 
      #creating a transparent frame to arrange payment
      tframe2=CTkFrame(root1,width=400,height=100,fg_color="transparent")
@@ -67,52 +148,52 @@ def buycar():
 
      a=ctk.CTkLabel(tframe1, text="Tata", font=("Arial", 12,"bold"))
      a.grid(row=1,column=0)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Tata,variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Tata,variable=selected_vehicle,command=select_from_tata)
      vehicle_menu.grid(row=2,column=0,padx=8)
 
      b=ctk.CTkLabel(tframe1, text="Suzuki", font=("Arial", 12,"bold"))
      b.grid(row=1,column=1)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Suzuki,variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Suzuki,variable=selected_vehicle,command=select_from_suzuki)
      vehicle_menu.grid(row=2,column=1,padx=8)
 
      c=ctk.CTkLabel(tframe1, text="Mahindra", font=("Arial", 12,"bold"))
      c.grid(row=1,column=2)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Mahindra,variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Mahindra,variable=selected_vehicle,command=select_from_mahindra)
      vehicle_menu.grid(row=2,column=2,padx=8)
 
      d=ctk.CTkLabel(tframe1, text="Hyundai", font=("Arial", 12,"bold"))
      d.grid(row=1,column=3)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Hyundai,variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Hyundai,variable=selected_vehicle,command=select_from_hyundai)
      vehicle_menu.grid(row=2,column=3,padx=8)
 
      e=ctk.CTkLabel(tframe1, text="Kia", font=("Arial", 12,"bold"))
      e.grid(row=1,column=4)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Kia,variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Kia,variable=selected_vehicle,command=select_from_kia)
      vehicle_menu.grid(row=2,column=4,padx=8)
 
      f = ctk.CTkLabel(tframe1, text="Citroen", font=("Arial", 12, "bold"))
      f.grid(row=3, column=0)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Citroen, variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Citroen, variable=selected_vehicle,command=select_from_citroen)
      vehicle_menu.grid(row=4, column=0, padx=8)
 
      g = ctk.CTkLabel(tframe1, text="Volkswagen", font=("Arial", 12, "bold"))
      g.grid(row=3,column=1)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Volkswagen, variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Volkswagen, variable=selected_vehicle,command=select_from_volkswagen)
      vehicle_menu.grid(row=4, column=1, padx=8)
 
      h = ctk.CTkLabel(tframe1, text="Skoda", font=("Arial", 12, "bold"))
      h.grid(row=3, column=2)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Skoda, variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Skoda, variable=selected_vehicle,command=select_from_skoda)
      vehicle_menu.grid(row=4, column=2, padx=8)
 
      i = ctk.CTkLabel(tframe1, text="Honda", font=("Arial", 12, "bold"))
      i.grid(row=3, column=3)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Honda, variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Honda, variable=selected_vehicle,command=select_from_honda)
      vehicle_menu.grid(row=4, column=3, padx=8)
 
      j = ctk.CTkLabel(tframe1, text="Toyota", font=("Arial", 12, "bold"))
      j.grid(row=3, column=4)
-     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Toyota, variable=selected_vehicle)
+     vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Toyota, variable=selected_vehicle,command=select_from_toyota)
      vehicle_menu.grid(row=4, column=4, padx=8)
 
      #creating a transparent label
@@ -134,6 +215,32 @@ def buycar():
      ctk.CTkLabel(tframe1, text="Select Variant:", font=("Arial", 16)).grid(row=9,column=2)
      variant_menu = ctk.CTkOptionMenu(tframe1,values=variants,variable=selected_variant)
      variant_menu.grid(row=10,column=2,pady=10)
+     
+     #Final Price
+     def price():
+          variant=selected_variant.get()
+          company=selected_company.get()
+          vehicle=selected_vehicle.get()
+          if variant=="Base":
+               price_column="Price1"
+          elif variant=="Mid":
+               price_column="Price2"
+          elif variant=="Top":
+               price_column="Price3"
+          
+          sql = f"SELECT {price_column} FROM {company} WHERE Car = %s"
+          mycur.execute(sql,(vehicle,))
+          row = mycur.fetchone()
+          global price_value
+          price_value = row[0] if row else "N/A"
+          price_label.configure(text=f"Price: ₹{price_value}")
+     obtain_price=CTkButton(tframe1,text="Obtain Price",command=price)
+     obtain_price.grid(row=11,column=2,pady=10)
+     price_box=CTkFrame(tframe1,border_width=2,border_color="green",height=35,width=200)
+     price_box.grid(row=12,column=2,pady=10)
+     price_label=CTkLabel(price_box,text=" ",font=("Arial", 16))
+     price_label.place(anchor="center",relx=0.5,rely=0.5)
+          
 
      # Payment Options
      ctk.CTkLabel(tframe2, text="Select Payment Method:", font=("Arial", 16)).grid(row=0,column=2,pady=10)
@@ -160,6 +267,7 @@ def buycar():
           Color: {selected_color.get()}
           Variant: {selected_variant.get()}
           Payment Method: {selected_payment.get()}
+          Price: ₹{price_value}
           Purchase number: {a}
           """
           messagebox.showinfo("Purchase Summary", summary)
@@ -169,7 +277,8 @@ def buycar():
           x3=selected_color.get()
           x4=selected_variant.get()
           x5=selected_payment.get()
-          insert = "INSERT INTO car_purchase (Purchase_no,phno, car_name, color, variant, payment) VALUES({},'{}','{}','{}','{}','{}')".format(x,x1,x2,x3,x4,x5)
+          x6=price_value
+          insert = "INSERT INTO car_purchase (Purchase_no,phno, car_name, color, variant, payment,Price) VALUES({},'{}','{}','{}','{}','{}',{})".format(x,x1,x2,x3,x4,x5,x6)
           mycur.execute(insert)
           root.deiconify()      # Show the root window again
           root.state('zoomed')
