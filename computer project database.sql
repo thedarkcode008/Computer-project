@@ -42,8 +42,37 @@ CREATE TABLE `car_purchase` (
 
 LOCK TABLES `car_purchase` WRITE;
 /*!40000 ALTER TABLE `car_purchase` DISABLE KEYS */;
-INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000);
+INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000),(3,'6282182971','Kodiaq','Black','Mid','Net Banking',4800000);
 /*!40000 ALTER TABLE `car_purchase` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `car_test`
+--
+
+DROP TABLE IF EXISTS `car_test`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `car_test` (
+  `Test_id` int NOT NULL,
+  `phno` varchar(15) NOT NULL,
+  `car_name` varchar(45) DEFAULT NULL,
+  `company` varchar(45) DEFAULT NULL,
+  `time` varchar(45) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`Test_id`),
+  UNIQUE KEY `Phno_UNIQUE` (`Test_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `car_test`
+--
+
+LOCK TABLES `car_test` WRITE;
+/*!40000 ALTER TABLE `car_test` DISABLE KEYS */;
+INSERT INTO `car_test` VALUES (1,'6282182971','i20','hyundai','11:00','2025-08-13');
+/*!40000 ALTER TABLE `car_test` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -364,4 +393,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-02 14:15:23
+-- Dump completed on 2025-08-02 16:43:20
