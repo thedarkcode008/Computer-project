@@ -1,12 +1,14 @@
-import mysql.connector
-mycon=mysql.connector.connect(host='localhost',user='root',passwd='asher123',database='dealer_service')
-mycur=mycon.cursor()
 import customtkinter as ctk
 import tkinter as tk
 from customtkinter import *
 from tkinter import messagebox,ttk
 from tkcalendar import DateEntry
 import datetime
+from PIL import Image
+
+import mysql.connector
+mycon=mysql.connector.connect(host='localhost',user='root',passwd='asher123',database='dealer_service')
+mycur=mycon.cursor()
 
 #creating main window
 root=ctk.CTk()
@@ -14,7 +16,13 @@ root.title("Sign Up")
 root.after(0,lambda: root.state('zoom'))
 ctk.set_appearance_mode("dark") #setiing window to dark mode
 ctk.set_default_color_theme("dark-blue")
-#creating frame for a clean layoutg 
+#creating frame for a clean layout
+
+logo=Image.open("C:\\Users\\hp\\Downloads\\MagnusMotorsLogo.png")
+logo = CTkImage(light_image=logo, dark_image=logo, size=(200, 200))
+
+namelogo_img=Image.open("C:\\Users\\hp\\Downloads\\namelogo.png")
+namelogo_img = CTkImage(light_image=namelogo_img, dark_image=namelogo_img, size=(200, 100))
 
 f=font=('MT',20, "bold")
 def cancellation(x):
@@ -124,11 +132,11 @@ def admin():
 def testcar():
      root.withdraw()
      root2=ctk.CTkToplevel(root)
+     root2.state("zoomed")
      root2.title("Test Drive Booking Portal")
      #creating a transparent frame to arrange widgets
      tframe3=CTkFrame(root2,width=400,height=100,fg_color="transparent")
      tframe3.place(relx=0.5,rely=0.4,anchor='center')
-     # Sample vehicle list
      #sample data of list of cars
 
      #1.Tata
@@ -592,11 +600,21 @@ def buycar():
 
 
 def sub(): #function for receiving phno and pass
+     
      a=e1.get()
      b=e2.get()
-     select='SELECT * FROM user WHERE phno="{}" AND passwd="{}"'.format(a,b)
+     select='SELECT * FROM user WHERE phno="{}" OR email="{}" AND passwd="{}"'.format(a,a,b)
      mycur.execute(select)
      login=mycur.fetchone()
+     
+     d=my_var.get()
+     if '@' in d:
+          phno_check=1
+     if phno_check==1:
+          email_query="Select phno from user where email=%s"
+          mycur.execute(email_query,(d,))
+          row=mycur.fetchone()
+          my_var.set(value=row[0])
      
      if a=="00" and b=="admin":
           root.withdraw()
@@ -614,11 +632,14 @@ def sub(): #function for receiving phno and pass
           
           CTkLabel(tframe3,text="Select An Option",font=("Arial", 20,"bold")).grid(row=0,column=1,pady=50)
           
-          carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,font=("Arial", 15,"bold")).grid(row=1,column=0)
-          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=1,column=1)
-          cartest=CTkButton(tframe3,text="Book a Test Drive",command=testcar,font=("Arial", 15,"bold")).grid(row=1,column=2)
+          carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,height=30,font=("Arial", 15,"bold")).grid(row=1,column=0)
           
-          back_btn=CTkButton(root,text="<--",command=signin,font=("Arial", 20,"bold")).grid(row=0,column=0)
+          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=1,column=1)
+          
+          cartest=CTkButton(tframe3,text="Book a Test Drive",command=testcar,height=30,font=("Arial", 15,"bold")).grid(row=1,column=2)
+          
+          CTkLabel(root,text='',image=namelogo_img).pack(side='bottom')
+          back_btn=CTkButton(root,text="<--",command=signin,font=("Arial", 20,"bold")).pack(side='top',anchor='nw')
           exit_btn=CTkButton(tframe3,text="Exit",command=destroy,height=40,font=("Arial", 20,"bold")).grid(row=2,column=1,pady=50)
      else:
           messagebox.showinfo("Error","Incorrect Phone Number or Password")
@@ -655,12 +676,12 @@ def creation(): #new registering window for new comers
      btn_back=CTkButton(tframe,text="Submit",command=go_back).grid(column=1,row=7,sticky='n')
      btn_cancel=CTkButton(tframe,text="Cancel",command=destroy1).grid(column=2,row=7,sticky='wn')
      
-     lphno=CTkLabel(tframe,text="Phone Number:",font=f)
+     lphno=CTkLabel(tframe,text="Phone Number",font=f)
      lphno.grid(column=0,row=0,padx=5,pady=5,sticky='e')
      ephno=CTkEntry(tframe)
      ephno.grid(column=1,row=0,columnspan=2,padx=5,pady=5,sticky='we')
      
-     lpasswd=CTkLabel(tframe,text="Password:",font=f)
+     lpasswd=CTkLabel(tframe,text="Password",font=f)
      lpasswd.grid(column=0,row=1,padx=5,pady=5,sticky='e')
      epasswd=CTkEntry(tframe)
      epasswd.grid(column=1,row=1,columnspan=2,padx=5,pady=5,sticky='we')
@@ -691,34 +712,41 @@ def creation(): #new registering window for new comers
      esec_phno.grid(column=1,row=6,columnspan=2,padx=5,pady=5,sticky='we')
 def signin():
      global my_var
+     phno_check=0
      my_var=ctk.StringVar()
+     
      for widget in root.winfo_children():
           widget.destroy()
-     fre=CTkFrame(root,width=500,height=200)
-     fre.pack_propagate(False) #frame will not shrink to the size of inner widgets
-     fre.place(relx=0.5,rely=0.3,anchor='center')
+     
+     fre=CTkFrame(root,width=400,height=350)
+     fre.place(relx=0.5,rely=0.5,anchor='center')
      #transparent frame created to make the inner widgets into one unit
      fr=CTkFrame(fre,width=400,height=200,fg_color="transparent")
-     fr.pack(pady=20)
-
+     fr.place(anchor='center',relx=0.5,rely=0.4)
+     
+     
+     logo_img=CTkLabel(root,text=' ',image=logo)
+     logo_img.place(anchor='n',relx=0.5)
+     
      global e1
      global e2
-     l1=CTkLabel(fr,text="Phone Number:",font=f)
-     l1.grid(column=0,row=0,padx=5,pady=5,sticky='es')
+     l1=CTkLabel(fr,text="Phno or Email:",font=f)
+     l1.grid(column=0,row=0,columnspan=2,padx=5,pady=5,sticky='wes')
      e1=CTkEntry(fr,textvariable=my_var)
-     e1.grid(column=1,row=0,columnspan=2,padx=5,pady=5,sticky='wse')
+     e1.grid(column=0,row=1,columnspan=2,padx=5,pady=5,sticky='wse')
 
 
      l2=CTkLabel(fr,text="Password:",font=f)
-     l2.grid(column=0,row=1,padx=5,pady=5,sticky='wn')
+     l2.grid(column=0,row=2,columnspan=2,padx=5,pady=5,sticky='wen')
      e2=CTkEntry(fr,show='*')
-     e2.grid(column=1,row=1,columnspan=2,padx=5,pady=5,sticky='wne')
+     e2.grid(column=0,row=3,columnspan=2,padx=5,pady=5,sticky='wne')
 
-     b1=CTkButton(fr,text="Sign In",command=sub).grid(column=1,row=2,sticky='n')
-     b2=CTkButton(fr,text="Exit",command=destroy).grid(column=2,row=2,sticky='wn')
-
-     signup=CTkButton(root,text="Create an Account",command=creation,fg_color="transparent",font=('Arial',13,'underline'))
-     signup.place(rely=0.5,relx=0.5,anchor="center")
+     b1=CTkButton(fr,text="Sign In",command=sub).grid(column=0,row=4,sticky='n',padx=5)
+     b2=CTkButton(fr,text="Exit",command=destroy).grid(column=1,row=4,sticky='n',padx=5)
+     
+     signup=CTkButton(fre,text="Create an Account",command=creation,fg_color="transparent",font=('Arial',13,'underline'))
+     signup.place(anchor='center',relx=0.5,rely=0.8)
+     
 signin()
 root.mainloop()
 mycon.commit()

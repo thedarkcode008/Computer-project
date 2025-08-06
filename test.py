@@ -1,90 +1,79 @@
 import customtkinter as ctk
-import tkinter as tk
 from tkinter import messagebox
-from tkcalendar import DateEntry
-import datetime
 
-# Sample vehicle list
-vehicles = [
-    "Toyota Corolla",
-    "Honda Civic",
-    "Ford Mustang",
-    "Tesla Model 3",
-    "BMW 3 Series"
-]
+# Set default appearance
+ctk.set_appearance_mode("dark")  # Optional: dark/light/system
+ctk.set_default_color_theme("blue")  # Can also be "green", "dark-blue", etc.
 
-root = ctk.CTk()
-root.title("Test Drive Booking System")
-root.after(0, lambda: root.state('zoomed'))
+# Main App Class
+class CarServiceApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
 
+        self.title("Car Service Facility")
+        self.geometry("600x500")
+        self.configure(bg="black")
 
-def generate_times():
-    times = []
-    start = datetime.datetime.strptime("09:00", "%H:%M")
-    for i in range(17):
-        times.append((start + datetime.timedelta(minutes=30 * i)).strftime("%H:%M"))
-    return times
+        # Title Label
+        self.title_label = ctk.CTkLabel(self, text="CAR SERVICE FACILITY", font=("Arial", 24, "bold"), text_color="white")
+        self.title_label.pack(pady=20)
 
+        # Frame for input fields
+        self.form_frame = ctk.CTkFrame(self, fg_color="#1a1a1a")
+        self.form_frame.pack(pady=10, padx=20, fill="x")
 
-def confirm_booking():
-    vehicle = vehicle_var.get()
-    date = date_entry.get_date()
-    time = time_var.get()
-    if vehicle and date and time:
-        msg = (
-            f"Test Drive Booked!\n\n"
-            f"Vehicle: {vehicle}\n"
-            f"Date: {date.strftime('%Y-%m-%d')}\n"
-            f"Time: {time}"
-        )
-        messagebox.showinfo("Booking Confirmed", msg)
-    else:
-        messagebox.showwarning("Incomplete", "Please select all options.")
+        # Name Entry
+        self.name_entry = self._add_entry("Customer Name")
+        # Contact Entry
+        self.contact_entry = self._add_entry("Contact Number")
+        # Car Model Entry
+        self.model_entry = self._add_entry("Car Model")
+        # Service Type Dropdown
+        self.service_type = ctk.StringVar(value="Oil Change")
+        self.service_dropdown = ctk.CTkOptionMenu(self.form_frame, values=["Oil Change", "Brake Check", "Full Service", "Engine Repair"], variable=self.service_type)
+        self._add_widget("Service Type", self.service_dropdown)
 
+        # Submit Button
+        self.submit_button = ctk.CTkButton(self, text="Submit", command=self.submit_form)
+        self.submit_button.pack(pady=20)
 
-# Title
-ctk.CTkLabel(root, text="Book a Test Drive",
-             font=ctk.CTkFont(size=24, weight="bold")).pack(pady=20)
+        # Footer
+        self.footer_label = ctk.CTkLabel(self, text="© 2025 Magnus Motors", font=("Arial", 10), text_color="gray")
+        self.footer_label.pack(side="bottom", pady=10)
 
-# Vehicle selection
-ctk.CTkLabel(root, text="Select a Vehicle:",
-             font=ctk.CTkFont(size=16)).pack(pady=(10, 5))
-vehicle_var = tk.StringVar(value=vehicles[0])
-ctk.CTkOptionMenu(root, variable=vehicle_var, values=vehicles).pack(pady=5)
+    def _add_entry(self, label_text):
+        label = ctk.CTkLabel(self.form_frame, text=label_text, text_color="white")
+        label.pack(pady=(10, 0))
+        entry = ctk.CTkEntry(self.form_frame, width=400)
+        entry.pack(pady=5)
+        return entry
 
-# Date selection
-ctk.CTkLabel(root, text="Select Pickup Date:",
-             font=ctk.CTkFont(size=16)).pack(pady=(20, 5))
-date_entry = DateEntry(root, width=18,
-                       background='darkblue',
-                       foreground='white',
-                       borderwidth=2,
-                       date_pattern='yyyy-mm-dd')
-date_entry.pack(pady=5)
+    def _add_widget(self, label_text, widget):
+        label = ctk.CTkLabel(self.form_frame, text=label_text, text_color="white")
+        label.pack(pady=(10, 0))
+        widget.pack(pady=5)
 
-# Time selection (segmented button)
-ctk.CTkLabel(root, text="Select Pickup Time:",
-             font=ctk.CTkFont(size=16)).pack(pady=(20, 5))
-time_var = tk.StringVar(value=generate_times()[0])
-ctk.CTkSegmentedButton(
-    root,
-    values=generate_times(),
-    variable=time_var,
-    selected_color="#28a745",
-    unselected_color="#e0e0e0",
-    text_color="#333333",
-    corner_radius=8
-).pack(fill="x", padx=20, pady=5)
+    def submit_form(self):
+        name = self.name_entry.get()
+        contact = self.contact_entry.get()
+        model = self.model_entry.get()
+        service = self.service_type.get()
 
-# Confirm Button
-ctk.CTkButton(root,
-              text="Confirm Booking",
-              command=confirm_booking,
-              fg_color="#1f6aa5",
-              hover_color="#155a96",
-              text_color="white",
-              width=200,
-              height=50,
-              corner_radius=8).pack(pady=30)
+        if not all([name, contact, model]):
+            messagebox.showwarning("Missing Info", "Please fill in all fields.")
+            return
 
-root.mainloop()
+        summary = f"Customer: {name}\nContact: {contact}\nCar Model: {model}\nService: {service}"
+        messagebox.showinfo("Booking Confirmed", summary)
+        self._clear_form()
+
+    def _clear_form(self):
+        self.name_entry.delete(0, 'end')
+        self.contact_entry.delete(0, 'end')
+        self.model_entry.delete(0, 'end')
+        self.service_type.set("Oil Change")
+
+# Run the App
+if __name__ == "__main__":
+    app = CarServiceApp()
+    app.mainloop()
