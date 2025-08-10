@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from customtkinter import *
 from tkinter import messagebox
-
+from tkcalendar import DateEntry
 # Set default appearance
 ctk.set_appearance_mode("dark")  # Optional: dark/light/system
 ctk.set_default_color_theme("blue")  # Can also be "green", "dark-blue", etc.
@@ -35,7 +35,7 @@ def submit_form():
 title_label = CTkLabel(root, text="CAR SERVICE FACILITY", font=("Arial", 24, "bold"))
 title_label.pack(pady=20)
 # Frame for input fields
-form_frame = CTkFrame(root,height=400,width=600)
+form_frame = CTkFrame(root,height=500,width=600)
 form_frame.pack(pady=10, padx=20,)
 form_frame.pack_propagate("False")
 # Car Model Entry
@@ -54,6 +54,9 @@ service_dropdown = CTkOptionMenu(form_frame, values=["Oil Change", "Brake Check"
 _add_widget("Service Type",service_dropdown)
 # problem entry
 problem = _add_entry("Describe The Problem In Less Than 30 words")
+# Date selection
+date_entry = DateEntry(form_frame,width=40)
+_add_widget("Select Your Date",date_entry)
 
 # Submit Button
 submit_button = CTkButton(form_frame,text="Submit", command=submit_form)

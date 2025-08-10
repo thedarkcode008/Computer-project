@@ -12,8 +12,7 @@ mycur=mycon.cursor()
 
 #creating main window
 root=ctk.CTk()
-root.title("Sign Up")
-root.after(0,lambda: root.state('zoom'))
+root.after(0,lambda: root.state('zoomed'))
 ctk.set_appearance_mode("dark") #setiing window to dark mode
 ctk.set_default_color_theme("dark-blue")
 #creating frame for a clean layout
@@ -38,14 +37,15 @@ def admin():
      adminwindow.state("zoomed")
      adminwindow.title("Admin Access Terminal")
      
+     style=ttk.Style(adminwindow)
+     #Define the font for the Treeview heading
+     style.configure('Treeview.Heading', font=('Calibri', 13, 'bold'))
+     #Define the font for the Treeview rows and set the row height
+     # The rowheight needs to be larger than the font size
+     style.configure('Treeview', rowheight=25, font=('Calibri', 12))
+     
      def carbooking():
-          style=ttk.Style(adminwindow)
-          #Define the font for the Treeview heading
-          style.configure('Treeview.Heading', font=('Calibri', 13, 'bold'))
 
-          #Define the font for the Treeview rows and set the row height
-          # The rowheight needs to be larger than the font size
-          style.configure('Treeview', rowheight=25, font=('Calibri', 12))
           def delete_booking():
                if delivered.get():
                     a=delivered.get()
@@ -54,6 +54,7 @@ def admin():
                     a=cancel_booking.get()
                     cancel_booking.delete(0, 'end')
                mycur.execute("DELETE FROM car_purchase where Purchase_no={}".format(a))
+               fetch_data_and_populate()#calling function to populate data in treeview
                
           for widget in adminwindow.winfo_children():
                widget.destroy()
@@ -107,24 +108,299 @@ def admin():
           exit_btn.grid(row=0,column=0)
           
           CTkLabel(tframe5,text=" ").grid(row=1,column=1,rowspan=2,pady=20)
-          CTkLabel(tframe5,text="Car delivery complete",font=("Arial", 20, "bold")).grid(row=3,column=0,pady=20)
+          CTkLabel(tframe5,text="Car Delivery Complete",font=("Arial", 20, "bold")).grid(row=3,column=0,pady=20)
           delivered=CTkEntry(tframe5,placeholder_text="Purchase Number")
           delivered.grid(row=4,column=0)
           CTkButton(tframe5,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=0,pady=10)
-          CTkLabel(tframe5,text="Car Booking cancel",font=("Arial", 20, "bold")).grid(row=3,column=2,pady=20)
+          CTkLabel(tframe5,text="Car Booking Cancel",font=("Arial", 20, "bold")).grid(row=3,column=2,pady=20)
           cancel_booking=CTkEntry(tframe5,placeholder_text="Purchase Number")
           cancel_booking.grid(row=4,column=2)
           CTkButton(tframe5,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=2,pady=10)
+          fetch_data_and_populate()
      
+     def carlist():
+          for widget in adminwindow.winfo_children():
+               widget.destroy()
+               
+          def deletecar():
+               company_name=company_name_variable.get()
+               carno=deletion.get()
+               delete_query=f"DELETE FROM {company_name} WHERE Car_no=%s"
+               mycur.execute(delete_query,(carno,))
+               deletion.delete(0,'end')
+               fetch_data_and_populate()#calling function to populate data in treeview
+               
+          def addcar():
+               company_name=company_name_variable.get()
+               Car_no_query=f"SELECT Car_no FROM {company_name} ORDER BY Car_no DESC LIMIT 1"
+               mycur.execute(Car_no_query)
+               last_row = mycur.fetchone()
+               if last_row:
+                    a=last_row[0]+1
+               else:
+                    a=1
+               name=car_name.get()
+               p1=price1.get()
+               p2=price2.get()
+               p3=price3.get()
+               addition_query=f"INSERT INTO {company_name} (Car_no,Car,Price1,Price2,Price3) VALUES(%s,%s,%s,%s,%s)"
+               mycur.execute(addition_query,(a,name,p1,p2,p3))
+               car_name.delete(0,'end')
+               price1.delete(0,'end')
+               price2.delete(0,'end')
+               price3.delete(0,'end')
+               fetch_data_and_populate()#calling function to populate data in treeview    
+          def editcar():
+               company_name=company_name_variable.get()
+               price=price_variable.get()
+               car_no=edit_car_no.get()
+               new_price=edit_price.get()
+               edit_query=f"UPDATE {company_name} SET {price}=%s where Car_no=%s"
+               mycur.execute(edit_query,(new_price,car_no))
+               edit_car_no.delete(0,'end')
+               edit_price.delete(0,'end')
+               fetch_data_and_populate()#calling function to populate data in treeview
+               
+               
+          def fetch_data_and_populate():  #Fetches data from MySQL and populates the Treeview
+               company_name=company_name_variable.get()
+               # 1. Execute query and fetch data
+               display=f"SELECT * FROM {company_name}"
+               mycur.execute(display)
+               rows = mycur.fetchall()      
+               # 2. Clear existing data in the treeview
+               for item in tree.get_children():
+                    tree.delete(item)       
+               # 3. Populate the treeview with new data
+               for row in rows:
+                    tree.insert('', tk.END, values=row) 
+                    
+          tframe6=CTkFrame(adminwindow,width=400,height=100,fg_color="transparent")
+          tframe6.place(relx=0.5,rely=0.7,anchor='center') 
+          
+          # --- Frame for Treeview and Scrollbar ---
+          tree_frame = CTkFrame(adminwindow)
+          tree_frame.place(anchor='center',relx=0.5,rely=0.2)
+
+          # --- Scrollbar ---
+          tree_scroll = ttk.Scrollbar(tree_frame)
+          tree_scroll.pack(side="right", fill="y")
+
+          # --- Treeview Widget ---
+          columns = ('Car_no','Car', 'Price1', 'Price2', 'Price3')
+          tree = ttk.Treeview(
+          tree_frame,height=15,
+          columns=columns,
+          show='headings',
+          yscrollcommand=tree_scroll.set)
+
+          # Define headings
+          tree.heading('Car_no', text='Car Number')
+          tree.heading('Car', text='Car Name')
+          tree.heading('Price1', text='Price 1')
+          tree.heading('Price2', text='Price 2')
+          tree.heading('Price3', text='Price 3')
+
+          tree.pack(fill="both", expand=True)
+          tree_scroll.config(command=tree.yview)
+          
+          company=['tata','suzuki','mahindra','hyundai','kia','citroen','volkswagen','skoda','honda','toyota']
+          company_name_variable=ctk.StringVar(value="Select a Company")
+          # --- Load Data Button ---
+          company_name_entry=CTkOptionMenu(tframe6, variable=company_name_variable, values=company)
+          company_name_entry.grid(row=0,column=1,pady=5)
+          load_button = CTkButton(tframe6, text="Load/Refresh Data", command=fetch_data_and_populate)
+          load_button.grid(row=1,column=1,pady=5)
+          exit_btn=CTkButton(adminwindow,text="<--",command=admin_widgets)
+          exit_btn.grid(row=0,column=0)
+          
+          CTkLabel(tframe6,text=" ").grid(row=2,column=1,rowspan=2,pady=20)
+          
+          CTkLabel(tframe6,text="Delete Car",font=("Arial", 20, "bold")).grid(row=3,column=0,pady=20)
+          deletion=CTkEntry(tframe6,placeholder_text="Car Number")
+          deletion.grid(row=4,column=0,padx=5)
+          CTkButton(tframe6,text='confirm',font=("Arial", 20, "bold"),command=deletecar).grid(row=5,column=0,pady=10,padx=5)
+          
+          CTkLabel(tframe6,text="Add Car",font=("Arial", 20, "bold")).grid(row=3,column=1,pady=15)
+          car_name=CTkEntry(tframe6,placeholder_text="Car Name")
+          car_name.grid(row=4,column=1,pady=5,padx=5)
+          price1=CTkEntry(tframe6,placeholder_text="price 1")
+          price1.grid(row=5,column=1,pady=5,padx=5)
+          price2=CTkEntry(tframe6,placeholder_text="price 2")
+          price2.grid(row=6,column=1,pady=5,padx=5)
+          price3=CTkEntry(tframe6,placeholder_text="price 3")
+          price3.grid(row=7,column=1,pady=5,padx=5)
+          CTkButton(tframe6,text='confirm',font=("Arial", 20, "bold"),command=addcar).grid(row=8,column=1,pady=5,padx=5)
+          
+          CTkLabel(tframe6,text="Edit Price",font=("Arial", 20, "bold")).grid(row=3,column=2,pady=20)
+          edit_car_no=CTkEntry(tframe6,placeholder_text="Car Number")
+          edit_car_no.grid(row=4,column=2,padx=5)
+          price_variable=ctk.StringVar(value="Choose Which Price")
+          price_type=CTkOptionMenu(tframe6,variable=price_variable ,values=['Price1','Price2','Price3'])
+          price_type.grid(row=5,column=2,padx=5)
+          edit_price=CTkEntry(tframe6,placeholder_text="Enter Price")
+          edit_price.grid(row=6,column=2,padx=5)
+          CTkButton(tframe6,text='confirm',font=("Arial", 20, "bold"),command=editcar).grid(row=7,column=2,pady=10,padx=5)
+          
+     def cartest():
+          def delete_booking():
+               if test_finished.get():
+                    a=test_finished.get()
+                    test_finished.delete(0, 'end')
+               elif cancel_booking.get():
+                    a=cancel_booking.get()
+                    cancel_booking.delete(0, 'end')
+               mycur.execute("DELETE FROM car_Test where Test_id={}".format(a))
+               fetch_data_and_populate()#calling function to populate data in treeview
+          
+          for widget in adminwindow.winfo_children():
+               widget.destroy()
+          def fetch_data_and_populate():  #Fetches data from MySQL and populates the Treeview
+               # 1. Execute query and fetch data
+               mycur.execute("SELECT * FROM car_test")
+               rows = mycur.fetchall()
+
+               # 2. Clear existing data in the treeview
+               for item in tree.get_children():
+                    tree.delete(item)
+
+               # 3. Populate the treeview with new data
+               for row in rows:
+                    tree.insert('', tk.END, values=row)
+          tframe7=CTkFrame(adminwindow,width=400,height=100,fg_color="transparent")
+          tframe7.place(relx=0.5,rely=0.7,anchor='center') 
+          
+          # --- Frame for Treeview and Scrollbar ---
+          tree_frame = CTkFrame(adminwindow)
+          tree_frame.place(anchor='center',relx=0.5,rely=0.2)
+
+          # --- Scrollbar ---
+          tree_scroll = ttk.Scrollbar(tree_frame)
+          tree_scroll.pack(side="right", fill="y")
+
+          # --- Treeview Widget ---
+          columns = ('Test_id','phno', 'car_name', 'company', 'time', 'date')
+          tree = ttk.Treeview(
+          tree_frame,height=15,
+          columns=columns,
+          show='headings',
+          yscrollcommand=tree_scroll.set)
+
+          # Define headings
+          tree.heading('Test_id', text='Test ID')
+          tree.heading('phno', text='Phone number')
+          tree.heading('car_name', text='Car Name')
+          tree.heading('company', text='Comapny')
+          tree.heading('time', text='Time')
+          tree.heading('date', text='Date')
+
+          tree.pack(fill="both", expand=True)
+          tree_scroll.config(command=tree.yview)
+
+          # --- Load Data Button ---
+          load_button = CTkButton(tframe7, text="Load/Refresh Data", command=fetch_data_and_populate)
+          load_button.grid(row=0,column=1)
+          exit_btn=CTkButton(adminwindow,text="<--",command=admin_widgets)
+          exit_btn.grid(row=0,column=0)
+          
+          CTkLabel(tframe7,text=" ").grid(row=1,column=1,rowspan=2,pady=20)
+          CTkLabel(tframe7,text="Test Drive complete",font=("Arial", 20, "bold")).grid(row=3,column=0,pady=20)
+          test_finished=CTkEntry(tframe7,placeholder_text="Test ID")
+          test_finished.grid(row=4,column=0)
+          CTkButton(tframe7,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=0,pady=10)
+          CTkLabel(tframe7,text="Cancel Test Drive Booking",font=("Arial", 20, "bold")).grid(row=3,column=2,pady=20)
+          cancel_booking=CTkEntry(tframe7,placeholder_text="Test ID")
+          cancel_booking.grid(row=4,column=2)
+          CTkButton(tframe7,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=2,pady=10)
+          fetch_data_and_populate()
+     
+     def servicebooking():
+
+          def delete_booking():
+               if serviced.get():
+                    a=serviced.get()
+                    serviced.delete(0, 'end')
+               elif cancel_booking.get():
+                    a=cancel_booking.get()
+                    cancel_booking.delete(0, 'end')
+               mycur.execute("DELETE FROM car_service where service_id={}".format(a))
+               fetch_data_and_populate()#calling function to populate data in treeview
+               
+          for widget in adminwindow.winfo_children():
+               widget.destroy()
+          def fetch_data_and_populate():  #Fetches data from MySQL and populates the Treeview
+               # 1. Execute query and fetch data
+               mycur.execute("SELECT * FROM car_service")
+               rows = mycur.fetchall()
+
+               # 2. Clear existing data in the treeview
+               for item in tree.get_children():
+                    tree.delete(item)
+
+               # 3. Populate the treeview with new data
+               for row in rows:
+                    tree.insert('', tk.END, values=row)
+          tframe8=CTkFrame(adminwindow,width=400,height=100,fg_color="transparent")
+          tframe8.place(relx=0.5,rely=0.7,anchor='center') 
+          
+          # --- Frame for Treeview and Scrollbar ---
+          tree_frame = CTkFrame(adminwindow)
+          tree_frame.place(anchor='center',relx=0.5,rely=0.2)
+
+          # --- Scrollbar ---
+          tree_scroll = ttk.Scrollbar(tree_frame)
+          tree_scroll.pack(side="right", fill="y")
+
+          # --- Treeview Widget ---
+          columns = ('service_id','phno', 'car_name', 'company', 'service_type', 'problem','date')
+          tree = ttk.Treeview(
+          tree_frame,height=15,
+          columns=columns,
+          show='headings',
+          yscrollcommand=tree_scroll.set)
+
+          # Define headings
+          tree.heading('service_id', text='Service ID')
+          tree.heading('phno', text='Phone number')
+          tree.heading('car_name', text='Car Name')
+          tree.heading('company', text='Company')
+          tree.heading('service_type', text='Service Type')
+          tree.heading('problem', text='Problem')
+          tree.heading('date', text='Date')
+
+          tree.pack(fill="both", expand=True)
+          tree_scroll.config(command=tree.yview)
+
+          # --- Load Data Button ---
+          load_button = CTkButton(tframe8, text="Load/Refresh Data", command=fetch_data_and_populate)
+          load_button.grid(row=0,column=1)
+          exit_btn=CTkButton(adminwindow,text="<--",command=admin_widgets)
+          exit_btn.grid(row=0,column=0)
+          
+          CTkLabel(tframe8,text=" ").grid(row=1,column=1,rowspan=2,pady=20)
+          CTkLabel(tframe8,text="Car Service Complete",font=("Arial", 20, "bold")).grid(row=3,column=0,pady=20)
+          serviced=CTkEntry(tframe8,placeholder_text="Service ID")
+          serviced.grid(row=4,column=0)
+          CTkButton(tframe8,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=0,pady=10)
+          CTkLabel(tframe8,text="Car Service Cancel",font=("Arial", 20, "bold")).grid(row=3,column=2,pady=20)
+          cancel_booking=CTkEntry(tframe8,placeholder_text="Service ID")
+          cancel_booking.grid(row=4,column=2)
+          CTkButton(tframe8,text='confirm',font=("Arial", 20, "bold"),command=delete_booking).grid(row=5,column=2,pady=10)
+          fetch_data_and_populate()
+          
      def admin_widgets():
           for widget in adminwindow.winfo_children():
                widget.destroy()
           tframe4=CTkFrame(adminwindow,width=400,height=400,border_width=5,border_color="#FFFFFF")
           tframe4.place(relx=0.5,rely=0.4,anchor='center') 
           innerframe=CTkFrame(tframe4,width=400,height=100,fg_color="transparent")
-          innerframe.place(relx=0.5,rely=0.2,anchor='center')    
-          CTkButton(innerframe,text="Access Carbooking",command=carbooking).grid(row=0,column=0)
-          CTkButton(innerframe,text="Exit",command=lambda: cancellation(adminwindow)).grid(row=1,column=0)
+          innerframe.place(relx=0.5,rely=0.5,anchor='center')   
+          CTkButton(innerframe,text="Access Carbooking",command=carbooking,font=("Arial", 16, "bold")).grid(row=0,column=0,pady=5)
+          CTkButton(innerframe,text="Acces Car List",command=carlist,font=("Arial", 16, "bold")).grid(row=1,column=0,pady=5)
+          CTkButton(innerframe,text="Access Test Drive Booking",command=cartest,font=("Arial", 16, "bold")).grid(row=2,column=0,pady=5)
+          CTkButton(innerframe,text="Access Service Booking",command=servicebooking,font=("Arial", 16, "bold")).grid(row=3,column=0,pady=5)
+          CTkButton(innerframe,text="Exit",command=lambda: cancellation(adminwindow),font=("Arial", 16, "bold")).grid(row=4,column=0,pady=5)
+          CTkLabel(adminwindow,text='',image=namelogo_img).pack(side='bottom') 
      admin_widgets()
           
      
@@ -248,7 +524,9 @@ def testcar():
                f"Vehicle: {vehicle}\n"
                f"Date: {date.strftime('%Y-%m-%d')}\n"
                f"Time: {time}\n"
-               f"Company: {company}"
+               f"Company: {company}\n"
+               f"Test ID: {a}\n"
+               "Kindly Remember the Test ID"
              )
                messagebox.showinfo("Booking Confirmed", msg)
           else:
@@ -259,7 +537,7 @@ def testcar():
           root2.destroy()
 
      # Title
-     title = CTkLabel(root2, text="Book a Test Drive", font=("Arial", 50, "bold"))
+     title = CTkLabel(root2, text="TEST DRIVE BOOKING FACILITY", font=("Arial", 50, "bold"))
      title.pack(pady=10)
         # Vehicle selection
      CTkLabel(tframe3, text="Select a Vehicle:", font=("Arial", 20, "bold")).grid(row=0,column=2,pady=10)
@@ -442,7 +720,7 @@ def buycar():
      selected_payment = ctk.StringVar(value=payment_methods[0])
 
      # Title
-     ctk.CTkLabel(root1, text="Buy a Car", font=("Helvetica", 50, "bold")).pack(pady=10)
+     ctk.CTkLabel(root1, text="CAR BUYING FACILITY", font=("Helvetica", 50, "bold")).pack(pady=10)
 
      #creating a transparent frame to arrange vehices,colors and variant
      tframe1=CTkFrame(root1,width=400,height=100,fg_color="transparent")
@@ -456,53 +734,43 @@ def buycar():
      # Vehicle List
      ctk.CTkLabel(tframe1, text="Select a Vehicle:", font=("Arial", 16)).grid(row=0,column=2)
 
-     a=ctk.CTkLabel(tframe1, text="Tata", font=("Arial", 12,"bold"))
-     a.grid(row=1,column=0)
+     ctk.CTkLabel(tframe1, text="Tata", font=("Arial", 12,"bold")).grid(row=1,column=0)
      vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Tata,variable=selected_vehicle,command=select_from_tata)
      vehicle_menu.grid(row=2,column=0,padx=8)
 
-     b=ctk.CTkLabel(tframe1, text="Suzuki", font=("Arial", 12,"bold"))
-     b.grid(row=1,column=1)
+     ctk.CTkLabel(tframe1, text="Suzuki", font=("Arial", 12,"bold")).grid(row=1,column=1)
      vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Suzuki,variable=selected_vehicle,command=select_from_suzuki)
      vehicle_menu.grid(row=2,column=1,padx=8)
 
-     c=ctk.CTkLabel(tframe1, text="Mahindra", font=("Arial", 12,"bold"))
-     c.grid(row=1,column=2)
+     ctk.CTkLabel(tframe1, text="Mahindra", font=("Arial", 12,"bold")).grid(row=1,column=2)
      vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Mahindra,variable=selected_vehicle,command=select_from_mahindra)
      vehicle_menu.grid(row=2,column=2,padx=8)
 
-     d=ctk.CTkLabel(tframe1, text="Hyundai", font=("Arial", 12,"bold"))
-     d.grid(row=1,column=3)
+     ctk.CTkLabel(tframe1, text="Hyundai", font=("Arial", 12,"bold")).grid(row=1,column=3)
      vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Hyundai,variable=selected_vehicle,command=select_from_hyundai)
      vehicle_menu.grid(row=2,column=3,padx=8)
 
-     e=ctk.CTkLabel(tframe1, text="Kia", font=("Arial", 12,"bold"))
-     e.grid(row=1,column=4)
+     ctk.CTkLabel(tframe1, text="Kia", font=("Arial", 12,"bold")).grid(row=1,column=4)
      vehicle_menu = ctk.CTkOptionMenu(tframe1,values=Kia,variable=selected_vehicle,command=select_from_kia)
      vehicle_menu.grid(row=2,column=4,padx=8)
 
-     f = ctk.CTkLabel(tframe1, text="Citroen", font=("Arial", 12, "bold"))
-     f.grid(row=3, column=0)
+     ctk.CTkLabel(tframe1, text="Citroen", font=("Arial", 12, "bold")).grid(row=3, column=0)
      vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Citroen, variable=selected_vehicle,command=select_from_citroen)
      vehicle_menu.grid(row=4, column=0, padx=8)
 
-     g = ctk.CTkLabel(tframe1, text="Volkswagen", font=("Arial", 12, "bold"))
-     g.grid(row=3,column=1)
+     ctk.CTkLabel(tframe1, text="Volkswagen", font=("Arial", 12, "bold")).grid(row=3,column=1)
      vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Volkswagen, variable=selected_vehicle,command=select_from_volkswagen)
      vehicle_menu.grid(row=4, column=1, padx=8)
 
-     h = ctk.CTkLabel(tframe1, text="Skoda", font=("Arial", 12, "bold"))
-     h.grid(row=3, column=2)
+     ctk.CTkLabel(tframe1, text="Skoda", font=("Arial", 12, "bold")).grid(row=3, column=2)
      vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Skoda, variable=selected_vehicle,command=select_from_skoda)
      vehicle_menu.grid(row=4, column=2, padx=8)
 
-     i = ctk.CTkLabel(tframe1, text="Honda", font=("Arial", 12, "bold"))
-     i.grid(row=3, column=3)
+     ctk.CTkLabel(tframe1, text="Honda", font=("Arial", 12, "bold")).grid(row=3, column=3)
      vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Honda, variable=selected_vehicle,command=select_from_honda)
      vehicle_menu.grid(row=4, column=3, padx=8)
 
-     j = ctk.CTkLabel(tframe1, text="Toyota", font=("Arial", 12, "bold"))
-     j.grid(row=3, column=4)
+     ctk.CTkLabel(tframe1, text="Toyota", font=("Arial", 12, "bold")).grid(row=3, column=4)
      vehicle_menu = ctk.CTkOptionMenu(tframe1, values=Toyota, variable=selected_vehicle,command=select_from_toyota)
      vehicle_menu.grid(row=4, column=4, padx=8)
 
@@ -576,6 +844,7 @@ def buycar():
           Payment Method: {selected_payment.get()}
           Price: ₹{price_value}
           Purchase number: {a}
+          Kindly Remember the purchase number for later clarification
           """
           messagebox.showinfo("Purchase Summary", summary)
           x=a
@@ -597,6 +866,87 @@ def buycar():
      #cancel button
      ctk.CTkButton(tframe2, text="Cancel", command=lambda: cancellation(root1),font=("Arial", 16,"bold")).grid(row=3,column=2,pady=10)
      
+def carservice():
+     root.withdraw()
+     root3=CTkToplevel(root)
+     root3.state("zoomed")
+     root3.title("Service Portal")
+     def _add_entry(label_text):
+          label = ctk.CTkLabel(form_frame, text=label_text, font=("Arial", 16, "bold"))
+          label.pack(pady=(10, 0))
+          entry = ctk.CTkEntry(form_frame, width=400)
+          entry.pack(pady=5)
+          return entry
+     
+     mycur.execute("SELECT service_id FROM car_service ORDER BY service_id DESC LIMIT 1")
+     last_row = mycur.fetchone()
+     if last_row:
+          a=last_row[0]+1
+     else:
+          a=1
+     
+     def _add_widget(label_text, widget):
+          label = ctk.CTkLabel(form_frame, text=label_text, font=("Arial", 16, "bold"))
+          label.pack(pady=(10, 0))
+          widget.pack(pady=5)
+    
+     def submit_form():
+          x=my_var.get()
+          model = model_entry.get()
+          prob= problem.get()
+          company=company_type.get()
+          service=service_type.get()
+          date=date_entry.get_date()
+          if not all([model,prob]):
+              messagebox.showwarning("Missing Info", "Please fill in all fields.")
+              return
+          summary = f"Car model: {model}\nCompany: {company}\nService Type: {service}\nProblem: {prob}\nService ID: {a}\nKindly Remember the Service ID"
+          messagebox.showinfo("Booking Confirmed", summary)
+          insert="INSERT INTO car_service (service_id,phno,car_name,company,service_type,problem,date) VALUES({},'{}','{}','{}','{}','{}','{}')".format(a,x,model,company,service,prob,date)
+          mycur.execute(insert)
+          root.deiconify()
+          root.state("zoomed")
+          root3.destroy()
+     
+     # Title Label
+     title_label = CTkLabel(root3, text="CAR SERVICE FACILITY", font=("Arial", 50, "bold"))
+     title_label.pack(pady=20)
+     # Frame for input fields
+     form_frame = CTkFrame(root3,height=500,width=600)
+     form_frame.pack(pady=10, padx=20,)
+     form_frame.pack_propagate("False")
+     
+     def validate_length(P):
+          return len(P)<=30
+     vcmd=(form_frame.register(validate_length),'%P')
+     
+     # Car Model Entry
+     model_entry = _add_entry("Car Model")
+     #car company entry
+     company_type=ctk.StringVar(value='Tata')
+     company=['Tata','Suzuki','Mahindra','Hyundai','Kia','Citroen','Volkswagen','Skoda','Honda','Toyota']
+     company_dropdown=CTkOptionMenu(form_frame,values=company,variable=company_type)
+     _add_widget("Choose the company",company_dropdown)
+
+
+     # Service Type Dropdown
+     service_type = ctk.StringVar(value="Oil Change")
+     service_dropdown = CTkOptionMenu(form_frame, values=["Oil Change", "Brake Check", "Full Service", "Engine Light ON","Wheel Alignment","Tyre Change","Other"], variable=service_type)
+     _add_widget("Service Type",service_dropdown)
+     # problem entry
+     problem = CTkEntry(form_frame,validate='key',validatecommand=vcmd,width=400)
+     _add_widget("Describe Your Problem in Less Than 30 Words",problem)
+     # Date selection
+     date_entry = DateEntry(form_frame,width=40)
+     _add_widget("Select Your Date",date_entry)
+
+     # Submit Button
+     submit_button = CTkButton(form_frame,text="Submit", command=submit_form)
+     submit_button.pack(pady=20)
+     cancel_button = CTkButton(form_frame,text="Cancel", command=lambda: cancellation(root3))
+     cancel_button.pack(pady=20)
+     root.mainloop()
+     
 
 
 def sub(): #function for receiving phno and pass
@@ -607,15 +957,6 @@ def sub(): #function for receiving phno and pass
      mycur.execute(select)
      login=mycur.fetchone()
      
-     d=my_var.get()
-     if '@' in d:
-          phno_check=1
-     if phno_check==1:
-          email_query="Select phno from user where email=%s"
-          mycur.execute(email_query,(d,))
-          row=mycur.fetchone()
-          my_var.set(value=row[0])
-     
      if a=="00" and b=="admin":
           root.withdraw()
           admin()
@@ -625,24 +966,153 @@ def sub(): #function for receiving phno and pass
           for widget in root.winfo_children():
                widget.destroy()
           root.title("Selection")
+          #if signed in with email obtaining the phone number
+          phno_check=0
+          d=my_var.get()
+          if '@' in d:
+               phno_check=1
+          if phno_check==1:
+               email_query="Select phno from user where email=%s"
+               mycur.execute(email_query,(d,))
+               row=mycur.fetchone()
+               my_var.set(value=row[0])
+          
+          def msgbox1():
+               purchase_no=entry_purchase_no.get()
+               mycur.execute("SELECT * FROM car_purchase where Purchase_no={}".format(purchase_no))
+               row=mycur.fetchone()
+               phno=row[1]
+               userphno=my_var.get()
+               if userphno==phno:
+                    car_name=row[2]
+                    color=row[3]
+                    variant=row[4]
+                    price=row[6]
+                    payment=row[5]
+                    summary = f"""
+                    Here is the information
+                    Vehicle: {car_name}
+                    Color: {color}
+                    Variant: {variant}
+                    Price: ₹{price}
+                    Payment Method: {payment}
+                    """             
+                    messagebox.showinfo("Booking info",summary)
+               else:
+                    messagebox.showerror("Error","Invalid purchase number")
+               entry_purchase_no.delete(0,'end')
+          def msgbox2():
+               test_id=entry_test_id.get()
+               mycur.execute("SELECT * FROM car_test where Test_id={}".format(test_id))
+               row=mycur.fetchone()
+               phno=row[1]
+               userphno=my_var.get()
+               if userphno==phno:
+                    car_name=row[2]
+                    company=row[3]
+                    time=row[4]
+                    date=row[5]
+                    summary = f"""
+                    Here is the information
+                    Vehicle: {car_name}
+                    Company: {company}
+                    Time: {time}
+                    Date: {date}
+                    """             
+                    messagebox.showinfo("Booking info",summary)
+               else:
+                    messagebox.showerror("Error","Invalid Test ID")
+               entry_test_id.delete(0,'end')
+          
+          def cancel_carbuy():
+               phno=my_var.get()
+               purchase_no=purchase_no_entry_cancel.get()
+               mycur.execute("SELECT phno FROM car_purchase where Purchase_no={}".format(purchase_no))
+               row=mycur.fetchone()
+               if row[0]==phno:
+                    response=messagebox.askokcancel("Cancel purchase?","Are You Sure")
+                    if response:
+                         mycur.execute("DELETE FROM car_purchase WHERE Purchase_no={}".format(purchase_no))
+                    else:
+                         messagebox.showerror("Error","Purchase not cancelled")
+                    purchase_no_entry_cancel.delete(0,'end')
+               else:
+                    messagebox.showerror("Error","Purchase_no not valid")
+                    
+          def cancel_cartest():
+               phno=my_var.get()
+               test_id=test_id_entry_cancel.get()
+               mycur.execute("SELECT phno FROM car_test where Test_id={}".format(test_id))
+               row=mycur.fetchone()
+               if row[0]==phno:
+                    response=messagebox.askokcancel("Cancel Test Drive?","Are You Sure")
+                    if response:
+                         mycur.execute("DELETE FROM car_test WHERE Test_id={}".format(test_id))
+                    else:
+                         messagebox.showerror("Error","Test Drive not cancelled")
+                    test_id_entry_cancel.delete(0,'end')
+               else:
+                    messagebox.showerror("Error","Test ID Not Valid")
+                    
+          def cancel_carservice():
+               phno=my_var.get()
+               service_id=service_id_entry_cancel.get()
+               mycur.execute("SELECT phno FROM car_service where service_id={}".format(service_id))
+               row=mycur.fetchone()
+               if row[0]==phno:
+                    response=messagebox.askokcancel("Cancel service?","Are You Sure")
+                    if response:
+                         mycur.execute("DELETE FROM car_service WHERE service_id={}".format(service_id))
+                    else:
+                         messagebox.showerror("Error","service not cancelled")
+                    service_id_entry_cancel.delete(0,'end')
+               else:
+                    messagebox.showerror("Error","Service ID Not Valid")
           
           #creating a transparent frame to arrange widgets
           tframe3=CTkFrame(root,width=400,height=100,fg_color="transparent")
-          tframe3.place(relx=0.5,rely=0.2,anchor='center')
+          tframe3.place(relx=0.5,rely=0.4,anchor='center')
           
-          CTkLabel(tframe3,text="Select An Option",font=("Arial", 20,"bold")).grid(row=0,column=1,pady=50)
-          
-          carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,height=30,font=("Arial", 15,"bold")).grid(row=1,column=0)
+          CTkLabel(tframe3,text="Select An Option",font=("Arial", 50,"bold")).grid(row=0,column=1,pady=50)
           
           CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=1,column=1)
           
-          cartest=CTkButton(tframe3,text="Book a Test Drive",command=testcar,height=30,font=("Arial", 15,"bold")).grid(row=1,column=2)
+          carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,height=40,font=("Arial", 16,"bold")).grid(row=1,column=0)
+          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=2,column=1)
+          seecarbook=CTkButton(tframe3,text="See Booked Cars",command=msgbox1,height=30,font=("Arial", 16,"bold")).grid(row=4,column=0,pady=5)
+          entry_purchase_no=CTkEntry(tframe3,placeholder_text="Enter Purchase No.")
+          entry_purchase_no.grid(row=3,column=0,pady=5)
+          
+          cartest=CTkButton(tframe3,text="Book a Test Drive",command=testcar,height=40,font=("Arial", 16,"bold")).grid(row=1,column=2)
+          seetestbook=CTkButton(tframe3,text="See Booked Test Drive",command=msgbox2,height=30,font=("Arial", 16,"bold")).grid(row=4,column=2,pady=5)
+          entry_test_id=CTkEntry(tframe3,placeholder_text="Enter Test ID")
+          entry_test_id.grid(row=3,column=2,pady=5)
+          
+          car_service=CTkButton(tframe3,text="Book Service",command=carservice,height=40,font=("Arial", 20,"bold")).grid(row=1,column=1,pady=10,padx=20)
+          
+          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=5,column=1)
+          
+          CTkLabel(tframe3,text='Cancel Car Booking',font=("Arial", 16,"bold")).grid(row=6,column=0,pady=10)
+          purchase_no_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Purchase No.")
+          purchase_no_entry_cancel.grid(row=7,column=0)
+          CTkButton(tframe3,text="confirm",command=cancel_carbuy,height=30,font=("Arial", 16,"bold")).grid(row=8,column=0,pady=5)
+          
+          CTkLabel(tframe3,text='Cancel Test Drive Booking',font=("Arial", 16,"bold")).grid(row=6,column=2,pady=10)
+          test_id_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Tst ID")
+          test_id_entry_cancel.grid(row=7,column=2)
+          CTkButton(tframe3,text="confirm",command=cancel_cartest,height=30,font=("Arial", 16,"bold")).grid(row=8,column=2,pady=5)
+          
+          CTkLabel(tframe3,text='Cancel Service Booking',font=("Arial", 16,"bold")).grid(row=6,column=1,pady=10)
+          service_id_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Service ID")
+          service_id_entry_cancel.grid(row=7,column=1)
+          CTkButton(tframe3,text="confirm",command=cancel_carservice,height=30,font=("Arial", 16,"bold")).grid(row=8,column=1,pady=5)
           
           CTkLabel(root,text='',image=namelogo_img).pack(side='bottom')
           back_btn=CTkButton(root,text="<--",command=signin,font=("Arial", 20,"bold")).pack(side='top',anchor='nw')
-          exit_btn=CTkButton(tframe3,text="Exit",command=destroy,height=40,font=("Arial", 20,"bold")).grid(row=2,column=1,pady=50)
+          exit_btn=CTkButton(tframe3,text="Exit",command=destroy,height=40,font=("Arial", 20,"bold")).grid(row=9,column=1,pady=50)
+          
      else:
-          messagebox.showinfo("Error","Incorrect Phone Number or Password")
+          messagebox.showinfo("Error","Incorrect Phone Number,Email or Password")
           
 
 def creation(): #new registering window for new comers
@@ -711,8 +1181,8 @@ def creation(): #new registering window for new comers
      esec_phno=CTkEntry(tframe)
      esec_phno.grid(column=1,row=6,columnspan=2,padx=5,pady=5,sticky='we')
 def signin():
+     root.title("Sign Up")
      global my_var
-     phno_check=0
      my_var=ctk.StringVar()
      
      for widget in root.winfo_children():
