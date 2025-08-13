@@ -42,8 +42,38 @@ CREATE TABLE `car_purchase` (
 
 LOCK TABLES `car_purchase` WRITE;
 /*!40000 ALTER TABLE `car_purchase` DISABLE KEYS */;
-INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000),(3,'6282182971','Kodiaq','Black','Mid','Net Banking',4800000);
+INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000),(3,'6282182971','Swift','Red','Mid','Net Banking',760000),(4,'9400627033','Thar Roxx','White','Top','EMI',2000000),(5,'9400627033','i20','Black','Top','Net Banking',1500000),(6,'6282182971','Jimny','Blue','Mid','Debit Card',1400000);
 /*!40000 ALTER TABLE `car_purchase` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `car_service`
+--
+
+DROP TABLE IF EXISTS `car_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `car_service` (
+  `service_id` int NOT NULL,
+  `phno` varchar(15) DEFAULT NULL,
+  `car_name` varchar(45) DEFAULT NULL,
+  `company` varchar(45) DEFAULT NULL,
+  `service_type` varchar(45) DEFAULT NULL,
+  `problem` varchar(30) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`service_id`),
+  UNIQUE KEY `service_id_UNIQUE` (`service_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `car_service`
+--
+
+LOCK TABLES `car_service` WRITE;
+/*!40000 ALTER TABLE `car_service` DISABLE KEYS */;
+INSERT INTO `car_service` VALUES (1,'6282182971','Thar','Mahindra','Full Service','Need full service','2025-08-14'),(2,'6282182971','Thar','Mahindra','Other','4 wheel drive not working','2025-08-15'),(3,'6282182971','Swift','Suzuki','Brake Check','Brake not working','2025-08-10');
+/*!40000 ALTER TABLE `car_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -71,7 +101,7 @@ CREATE TABLE `car_test` (
 
 LOCK TABLES `car_test` WRITE;
 /*!40000 ALTER TABLE `car_test` DISABLE KEYS */;
-INSERT INTO `car_test` VALUES (1,'6282182971','i20','hyundai','11:00','2025-08-13');
+INSERT INTO `car_test` VALUES (1,'6282182971','i20','hyundai','11:00','2025-08-13'),(3,'6282182971','Slavia','skoda','10:00','2025-08-06');
 /*!40000 ALTER TABLE `car_test` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,7 +241,7 @@ CREATE TABLE `mahindra` (
 
 LOCK TABLES `mahindra` WRITE;
 /*!40000 ALTER TABLE `mahindra` DISABLE KEYS */;
-INSERT INTO `mahindra` VALUES (1,'BE 6',2500000,2600000,2800000),(2,'XEV 9e',2300000,2400000,2700000),(3,'XUV 400',1400000,1450000,1500000),(4,'XUV 3XO',1000000,1200000,1300000),(5,'XUV 700',2000000,2200000,2400000),(6,'Bolero',1300000,1500000,1600000),(7,'Scorpio',2000000,2300000,2500000),(8,'Thar',1500000,1600000,1800000),(9,'Thar Roxx',1600000,1800000,2000000),(10,'Bolero neo',1400000,1600000,1800000),(11,'Scorpio N',2200000,2500000,2600000);
+INSERT INTO `mahindra` VALUES (1,'BE 6',2500000,2600000,2800000),(2,'XEV 9e',2300000,2400000,2700000),(3,'XUV 400',1400000,1450000,1500000),(4,'XUV 3XO',1000000,1200000,1300000),(5,'XUV 700',2000000,2200000,2400000),(6,'Bolero',1300000,1500000,1600000),(7,'Scorpio',2000000,2300000,2500000),(8,'Thar',1500000,1600000,1800000),(9,'Thar Roxx',1600000,1800000,2000000),(10,'Bolero neo',1400000,1600000,1800000),(11,'Scorpio N',2100000,2300000,2800000);
 /*!40000 ALTER TABLE `mahindra` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,7 +285,7 @@ CREATE TABLE `suzuki` (
   `Car` varchar(45) NOT NULL,
   `Price1` int DEFAULT NULL,
   `Price2` int DEFAULT NULL,
-  `Prize3` int DEFAULT NULL,
+  `Price3` int DEFAULT NULL,
   PRIMARY KEY (`Car_no`),
   UNIQUE KEY `car_no_UNIQUE` (`Car_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -267,7 +297,7 @@ CREATE TABLE `suzuki` (
 
 LOCK TABLES `suzuki` WRITE;
 /*!40000 ALTER TABLE `suzuki` DISABLE KEYS */;
-INSERT INTO `suzuki` VALUES (1,'Ignis',800000,870000,900000),(2,'Swift',700000,760000,800000),(3,'Dzire',600000,650000,700000),(4,'Fronx',950000,1000000,1150000),(5,'Brezza',1200000,1270000,1350000),(6,'Grand Vitara',1500000,1700000,2000000),(7,'Espresso',500000,550000,600000),(8,'Celerio',400000,450000,500000),(9,'Alto',350000,400000,470000),(10,'Baleno',850000,900000,1000000),(11,'Ertiga',1100000,1200000,1250000),(12,'XL6',1400000,1500000,1700000),(13,'Invicto',2200000,2400000,2600000),(14,'Eeco',500000,550000,580000),(15,'WagonR',540000,600000,650000),(16,'Jimny',1300000,1400000,1500000);
+INSERT INTO `suzuki` VALUES (1,'Ignis',800000,870000,900000),(2,'Swift',700000,760000,800000),(3,'Dzire',600000,650000,700000),(4,'Fronx',950000,1000000,1150000),(5,'Brezza',1200000,1270000,1350000),(6,'Grand Vitara',1500000,1700000,2000000),(7,'Espresso',500000,550000,600000),(8,'Celerio',400000,450000,500000),(9,'Alto',350000,400000,470000),(10,'Baleno',850000,900000,1000000),(11,'Ertiga',1100000,1200000,1250000),(12,'XL6',1400000,1500000,1700000),(13,'Invicto',2200000,2400000,2600000),(15,'WagonR',540000,600000,650000),(16,'Jimny',1300000,1400000,1500000),(17,'Eeco',500000,570000,640000);
 /*!40000 ALTER TABLE `suzuki` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -341,8 +371,8 @@ CREATE TABLE `user` (
   `Last_Name` varchar(20) DEFAULT NULL,
   `Address` varchar(50) DEFAULT NULL,
   `sec_phno` varchar(15) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`phno`)
+  `email` varchar(50) NOT NULL,
+  PRIMARY KEY (`phno`,`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -352,7 +382,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES ('0','admin','admin','user',NULL,'0',NULL),('6282182971','asher123','Asher','Thomas Viju','Tharayil Pothara','8787654234','asherthomasv@gmail.com');
+INSERT INTO `user` VALUES ('0','admin','admin','user',NULL,'0','admin@gmail.com'),('6282182971','asher123','Asher','Thomas Viju','Tharayil Pothara','8787654234','asherthomasv@gmail.com'),('9400627033','vaishnav123','Vaishnav','Prasad','112 Bakar street','9430626900','vaishnavprasad@gmail.com');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -393,4 +423,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-02 16:43:20
+-- Dump completed on 2025-08-10 12:51:09
