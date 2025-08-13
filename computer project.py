@@ -37,12 +37,26 @@ def admin():
      adminwindow.state("zoomed")
      adminwindow.title("Admin Access Terminal")
      
-     style=ttk.Style(adminwindow)
-     #Define the font for the Treeview heading
-     style.configure('Treeview.Heading', font=('Calibri', 13, 'bold'))
-     #Define the font for the Treeview rows and set the row height
-     # The rowheight needs to be larger than the font size
-     style.configure('Treeview', rowheight=25, font=('Calibri', 12))
+     style = ttk.Style(root)
+     style.theme_use("clam")  # Use a theme that supports fieldbackground
+
+     # Configure Treeview style for dark theme
+     style.configure("Treeview",
+                     background="#2d2d2d",  # Dark gray background for rows
+                     fieldbackground="#2d2d2d",  # Dark gray background for empty area
+                     foreground="white",  # White text color
+                     rowheight=25,
+                     font=("Calibri", 12))
+
+     style.configure("Treeview.Heading",
+                     background="#444444",  # Slightly lighter gray for header
+                     foreground="white",
+                     font=("Calibri", 13, "bold"))
+
+     # Optional: map selected row colors
+     style.map("Treeview",
+          background=[("selected", "#0078d7")],  # Blue selection
+          foreground=[("selected", "white")])
      
      def carbooking():
 
@@ -125,14 +139,14 @@ def admin():
           def deletecar():
                company_name=company_name_variable.get()
                carno=deletion.get()
-               delete_query=f"DELETE FROM {company_name} WHERE Car_no=%s"
+               delete_query=f"DELETE FROM cars WHERE Car_no=%s"
                mycur.execute(delete_query,(carno,))
                deletion.delete(0,'end')
                fetch_data_and_populate()#calling function to populate data in treeview
                
           def addcar():
                company_name=company_name_variable.get()
-               Car_no_query=f"SELECT Car_no FROM {company_name} ORDER BY Car_no DESC LIMIT 1"
+               Car_no_query=f"SELECT Car_no FROM cars ORDER BY Car_no DESC LIMIT 1"
                mycur.execute(Car_no_query)
                last_row = mycur.fetchone()
                if last_row:
@@ -143,8 +157,8 @@ def admin():
                p1=price1.get()
                p2=price2.get()
                p3=price3.get()
-               addition_query=f"INSERT INTO {company_name} (Car_no,Car,Price1,Price2,Price3) VALUES(%s,%s,%s,%s,%s)"
-               mycur.execute(addition_query,(a,name,p1,p2,p3))
+               addition_query=f"INSERT INTO cars (Car_no,company,car,price1,price2,price3) VALUES(%s,%s,%s,%s,%s,%s)"
+               mycur.execute(addition_query,(a,company_name,name,p1,p2,p3))
                car_name.delete(0,'end')
                price1.delete(0,'end')
                price2.delete(0,'end')
@@ -155,7 +169,7 @@ def admin():
                price=price_variable.get()
                car_no=edit_car_no.get()
                new_price=edit_price.get()
-               edit_query=f"UPDATE {company_name} SET {price}=%s where Car_no=%s"
+               edit_query=f"UPDATE cars SET {price}=%s where Car_no=%s"
                mycur.execute(edit_query,(new_price,car_no))
                edit_car_no.delete(0,'end')
                edit_price.delete(0,'end')
@@ -165,8 +179,8 @@ def admin():
           def fetch_data_and_populate():  #Fetches data from MySQL and populates the Treeview
                company_name=company_name_variable.get()
                # 1. Execute query and fetch data
-               display=f"SELECT * FROM {company_name}"
-               mycur.execute(display)
+               display="SELECT Car_no,car,price1,price2,price3 FROM cars WHERE company=%s"
+               mycur.execute(display,(company_name,))
                rows = mycur.fetchall()      
                # 2. Clear existing data in the treeview
                for item in tree.get_children():
@@ -187,7 +201,7 @@ def admin():
           tree_scroll.pack(side="right", fill="y")
 
           # --- Treeview Widget ---
-          columns = ('Car_no','Car', 'Price1', 'Price2', 'Price3')
+          columns = ('Car_no','car', 'price1', 'price2', 'price3')
           tree = ttk.Treeview(
           tree_frame,height=15,
           columns=columns,
@@ -196,15 +210,15 @@ def admin():
 
           # Define headings
           tree.heading('Car_no', text='Car Number')
-          tree.heading('Car', text='Car Name')
-          tree.heading('Price1', text='Price 1')
-          tree.heading('Price2', text='Price 2')
-          tree.heading('Price3', text='Price 3')
+          tree.heading('car', text='Car Name')
+          tree.heading('price1', text='Price 1')
+          tree.heading('price2', text='Price 2')
+          tree.heading('price3', text='Price 3')
 
           tree.pack(fill="both", expand=True)
           tree_scroll.config(command=tree.yview)
           
-          company=['tata','suzuki','mahindra','hyundai','kia','citroen','volkswagen','skoda','honda','toyota']
+          company=['Tata','Suzuki','Mahindra','Hyundai','Kia','Citroen','Volkswagen','Skoda','Honda','Toyota']
           company_name_variable=ctk.StringVar(value="Select a Company")
           # --- Load Data Button ---
           company_name_entry=CTkOptionMenu(tframe6, variable=company_name_variable, values=company)
@@ -399,7 +413,7 @@ def admin():
           CTkButton(innerframe,text="Acces Car List",command=carlist,font=("Arial", 16, "bold")).grid(row=1,column=0,pady=5)
           CTkButton(innerframe,text="Access Test Drive Booking",command=cartest,font=("Arial", 16, "bold")).grid(row=2,column=0,pady=5)
           CTkButton(innerframe,text="Access Service Booking",command=servicebooking,font=("Arial", 16, "bold")).grid(row=3,column=0,pady=5)
-          CTkButton(innerframe,text="Exit",command=lambda: cancellation(adminwindow),font=("Arial", 16, "bold")).grid(row=4,column=0,pady=5)
+          CTkButton(innerframe,text="Exit",command=lambda: cancellation(adminwindow),font=("Arial", 16, "bold"),fg_color='#990000',hover_color="#670101").grid(row=4,column=0,pady=5)
           CTkLabel(adminwindow,text='',image=namelogo_img).pack(side='bottom') 
      admin_widgets()
           
@@ -416,61 +430,61 @@ def testcar():
      #sample data of list of cars
 
      #1.Tata
-     mycur.execute("SELECT Car FROM tata")
+     mycur.execute("SELECT Car FROM cars WHERE company='Tata'")
      z1 = mycur.fetchall()
      # Extract car names as a flat list
      Tata = [row[0] for row in z1]
 
      #2.Suzuki
-     mycur.execute("SELECT Car FROM suzuki")
+     mycur.execute("SELECT Car FROM cars WHERE company='Suzuki'")
      z2 = mycur.fetchall()
      # Extract car names as a flat list
      Suzuki = [row[0] for row in z2]
 
      #3.Mahindra
-     mycur.execute("SELECT Car FROM mahindra")
+     mycur.execute("SELECT Car FROM cars WHERE company='Mahindra'")
      z3 = mycur.fetchall()
      # Extract car names as a flat list
      Mahindra = [row[0] for row in z3]
 
      #4.Hyundai
-     mycur.execute("SELECT Car FROM hyundai")
+     mycur.execute("SELECT Car FROM cars WHERE company='Hyundai'")
      z4 = mycur.fetchall()
      # Extract car names as a flat list
      Hyundai = [row[0] for row in z4]
 
      #5.Kia
-     mycur.execute("SELECT Car FROM kia")
+     mycur.execute("SELECT Car FROM cars WHERE company='Kia'")
      z5 = mycur.fetchall()
      # Extract car names as a flat list
      Kia = [row[0] for row in z5]
 
      #6.Citroen
-     mycur.execute("SELECT Car FROM citroen")
+     mycur.execute("SELECT Car FROM cars WHERE company='Citroen'")
      z3 = mycur.fetchall()
      # Extract car names as a flat list
      Citroen = [row[0] for row in z3]
 
      #7.Volkswagen
-     mycur.execute("SELECT Car FROM volkswagen")
+     mycur.execute("SELECT Car FROM cars WHERE company='Volkswagen'")
      z7 = mycur.fetchall()
      # Extract car names as a flat list
      Volkswagen = [row[0] for row in z7]
 
      #8.Skoda
-     mycur.execute("SELECT Car FROM skoda")
+     mycur.execute("SELECT Car FROM cars WHERE company='Skoda'")
      z8 = mycur.fetchall()
      # Extract car names as a flat list
      Skoda = [row[0] for row in z8]
 
      #9.Honda
-     mycur.execute("SELECT Car FROM honda")
+     mycur.execute("SELECT Car FROM cars WHERE company='Honda'")
      z8 = mycur.fetchall()
      # Extract car names as a flat list
      Honda = [row[0] for row in z8]
 
      #10.Toyota
-     mycur.execute("SELECT Car FROM toyota")
+     mycur.execute("SELECT Car FROM cars WHERE company='Toyota'")
      z10 = mycur.fetchall()
      # Extract car names as a flat list
      Toyota = [row[0] for row in z10]
@@ -478,25 +492,25 @@ def testcar():
      selected_company = ctk.StringVar(value="Tata")
      companychange=0
      def select_from_tata(car):
-         selected_company.set("tata")
+         selected_company.set("Tata")
      def select_from_suzuki(car):
-         selected_company.set("suzuki")
+         selected_company.set("Suzuki")
      def select_from_mahindra(car):
-         selected_company.set("mahindra")
+         selected_company.set("Mahindra")
      def select_from_hyundai(car):
-         selected_company.set("hyundai")
+         selected_company.set("Hyundai")
      def select_from_kia(car):
-         selected_company.set("kia")
+         selected_company.set("Kia")
      def select_from_citroen(car):
-         selected_company.set("citroen")
+         selected_company.set("Citroen")
      def select_from_volkswagen(car):
-         selected_company.set("volkswagen")
+         selected_company.set("Volkswagen")
      def select_from_skoda(car):
-         selected_company.set("skoda")
+         selected_company.set("Skoda")
      def select_from_honda(car):
-         selected_company.set("honda")
+         selected_company.set("Honda")
      def select_from_toyota(car):
-         selected_company.set("toyota")
+         selected_company.set("Toyota")
      
      mycur.execute("SELECT Test_id FROM car_test ORDER BY Test_id DESC LIMIT 1")
      last_row = mycur.fetchone()
@@ -541,7 +555,7 @@ def testcar():
      title.pack(pady=10)
         # Vehicle selection
      CTkLabel(tframe3, text="Select a Vehicle:", font=("Arial", 20, "bold")).grid(row=0,column=2,pady=10)
-     vehicle_var = ctk.StringVar(value=Tata[0])
+     vehicle_var = ctk.StringVar(value=" ")
 
      #Tata
      ctk.CTkLabel(tframe3, text="Tata", font=("Arial", 12,"bold")).grid(row=1,column=0)
@@ -618,95 +632,95 @@ def buycar():
      #sample data of list of cars
      
      #1.Tata
-     mycur.execute("SELECT Car FROM tata")
+     mycur.execute("SELECT Car FROM cars WHERE company='Tata'")
      z1 = mycur.fetchall()
      # Extract car names as a flat list
      Tata = [row[0] for row in z1]
      
      #2.Suzuki
-     mycur.execute("SELECT Car FROM suzuki")
+     mycur.execute("SELECT Car FROM cars WHERE company='Suzuki'")
      z2 = mycur.fetchall()
      # Extract car names as a flat list
      Suzuki = [row[0] for row in z2]
      
      #3.Mahindra
-     mycur.execute("SELECT Car FROM mahindra")
+     mycur.execute("SELECT Car FROM cars WHERE company='Mahindra'")
      z3 = mycur.fetchall()
      # Extract car names as a flat list
      Mahindra = [row[0] for row in z3]
      
      #4.Hyundai
-     mycur.execute("SELECT Car FROM hyundai")
+     mycur.execute("SELECT Car FROM cars WHERE company='Hyundai'")
      z4 = mycur.fetchall()
      # Extract car names as a flat list
      Hyundai = [row[0] for row in z4]
      
      #5.Kia
-     mycur.execute("SELECT Car FROM kia")
+     mycur.execute("SELECT Car FROM cars WHERE company='Kia'")
      z5 = mycur.fetchall()
      # Extract car names as a flat list
      Kia = [row[0] for row in z5]
      
      #6.Citroen
-     mycur.execute("SELECT Car FROM citroen")
+     mycur.execute("SELECT Car FROM cars WHERE company='Citroen'")
      z3 = mycur.fetchall()
      # Extract car names as a flat list
      Citroen = [row[0] for row in z3]
      
      #7.Volkswagen
-     mycur.execute("SELECT Car FROM volkswagen")
+     mycur.execute("SELECT Car FROM cars WHERE company='Volkswagen'")
      z7 = mycur.fetchall()
      # Extract car names as a flat list
      Volkswagen = [row[0] for row in z7]
      
      #8.Skoda
-     mycur.execute("SELECT Car FROM skoda")
+     mycur.execute("SELECT Car FROM cars WHERE company='Skoda'")
      z8 = mycur.fetchall()
      # Extract car names as a flat list
      Skoda = [row[0] for row in z8]
      
      #9.Honda
-     mycur.execute("SELECT Car FROM honda")
+     mycur.execute("SELECT Car FROM cars WHERE company='Honda'")
      z8 = mycur.fetchall()
      # Extract car names as a flat list
      Honda = [row[0] for row in z8]
      
      #10.Toyota
-     mycur.execute("SELECT Car FROM toyota")
+     mycur.execute("SELECT Car FROM cars WHERE company='Toyota'")
      z10 = mycur.fetchall()
      # Extract car names as a flat list
      Toyota = [row[0] for row in z10]
      
      selected_company = ctk.StringVar(value="Tata")
      def select_from_tata(car):
-          selected_company.set("tata")
+          selected_company.set("Tata")
 
      def select_from_suzuki(car):
-          selected_company.set("suzuki")
+          selected_company.set("Suzuki")
 
      def select_from_mahindra(car):
-          selected_company.set("mahindra")
+          selected_company.set("Mahindra")
 
      def select_from_hyundai(car):
-          selected_company.set("hyundai")
+          selected_company.set("Hyundai")
 
      def select_from_kia(car):
-          selected_company.set("kia")
+          selected_company.set("Kia")
 
      def select_from_citroen(car):
-          selected_company.set("citroen")
+          selected_company.set("Citroen")
 
      def select_from_volkswagen(car):
-          selected_company.set("volkswagen")
+          selected_company.set("Volkswagen")
 
      def select_from_skoda(car):
-          selected_company.set("skoda")
+          selected_company.set("Skoda")
 
      def select_from_honda(car):
-          selected_company.set("honda")
+          selected_company.set("Honda")
 
      def select_from_toyota(car):
-          selected_company.set("toyota")
+          selected_company.set("Toyota")
 
      colors = ["Red", "Blue", "Black", "White", "Silver"]
      variants = ["Base", "Mid", "Top"]
@@ -714,7 +728,7 @@ def buycar():
      payment_methods = ["Credit Card", "Debit Card", "Net Banking", "UPI", "EMI"]
 
      # Variables
-     selected_vehicle = ctk.StringVar(value=Tata[0])
+     selected_vehicle = ctk.StringVar(value=" ")
      selected_color = ctk.StringVar(value=colors[0])
      selected_variant = ctk.StringVar(value=variants[0])
      selected_payment = ctk.StringVar(value=payment_methods[0])
@@ -806,8 +820,8 @@ def buycar():
           elif variant=="Top":
                price_column="Price3"
           
-          sql = f"SELECT {price_column} FROM {company} WHERE Car = %s"
-          mycur.execute(sql,(vehicle,))
+          sql = f"SELECT {price_column} FROM cars WHERE Car = %s and company= %s"
+          mycur.execute(sql,(vehicle,company))
           row = mycur.fetchone()
           global price_value
           price_value = row[0] if row else "N/A"
@@ -941,9 +955,9 @@ def carservice():
      _add_widget("Select Your Date",date_entry)
 
      # Submit Button
-     submit_button = CTkButton(form_frame,text="Submit", command=submit_form)
+     submit_button = CTkButton(form_frame,text="Submit", command=submit_form,font=("Arial", 16, "bold"))
      submit_button.pack(pady=20)
-     cancel_button = CTkButton(form_frame,text="Cancel", command=lambda: cancellation(root3))
+     cancel_button = CTkButton(form_frame,text="Cancel", command=lambda: cancellation(root3),font=("Arial", 16, "bold"))
      cancel_button.pack(pady=20)
      root.mainloop()
      
@@ -1069,16 +1083,27 @@ def sub(): #function for receiving phno and pass
                else:
                     messagebox.showerror("Error","Service ID Not Valid")
           
+          def search():
+               car_name=search_price.get()
+               car_name=car_name.title()
+               mycur.execute("SELECT price1,price2,price3 FROM cars WHERE car='{}'".format(car_name))
+               row=mycur.fetchone()
+               if row:
+                    price_summary=f'Base Price={row[0]}\nMid Price={row[1]}\nTop Price={row[2]}'
+                    messagebox.showinfo("Magnus Motors",price_summary)
+               else:
+                    messagebox.showerror("Error","Car Not Found")
+          
           #creating a transparent frame to arrange widgets
-          tframe3=CTkFrame(root,width=400,height=100,fg_color="transparent")
-          tframe3.place(relx=0.5,rely=0.4,anchor='center')
+          
+          tframe3=CTkFrame(root,fg_color="transparent")
+          tframe3.place(relx=0.52,rely=0.4,anchor='center')
           
           CTkLabel(tframe3,text="Select An Option",font=("Arial", 50,"bold")).grid(row=0,column=1,pady=50)
           
-          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=1,column=1)
-          
           carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,height=40,font=("Arial", 16,"bold")).grid(row=1,column=0)
-          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=2,column=1)
+          CTkLabel(tframe3,text="  ",fg_color="transparent").grid(row=2,column=1)
+          
           seecarbook=CTkButton(tframe3,text="See Booked Cars",command=msgbox1,height=30,font=("Arial", 16,"bold")).grid(row=4,column=0,pady=5)
           entry_purchase_no=CTkEntry(tframe3,placeholder_text="Enter Purchase No.")
           entry_purchase_no.grid(row=3,column=0,pady=5)
@@ -1088,9 +1113,9 @@ def sub(): #function for receiving phno and pass
           entry_test_id=CTkEntry(tframe3,placeholder_text="Enter Test ID")
           entry_test_id.grid(row=3,column=2,pady=5)
           
-          car_service=CTkButton(tframe3,text="Book Service",command=carservice,height=40,font=("Arial", 20,"bold")).grid(row=1,column=1,pady=10,padx=20)
+          car_service=CTkButton(tframe3,text="Book Service",command=carservice,height=40,font=("Arial", 20,"bold")).grid(row=1,column=1,pady=10)
           
-          CTkLabel(tframe3,text="         ",fg_color="transparent").grid(row=5,column=1)
+          CTkLabel(tframe3,text=" ",fg_color="transparent").grid(row=5,column=1)
           
           CTkLabel(tframe3,text='Cancel Car Booking',font=("Arial", 16,"bold")).grid(row=6,column=0,pady=10)
           purchase_no_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Purchase No.")
@@ -1107,9 +1132,14 @@ def sub(): #function for receiving phno and pass
           service_id_entry_cancel.grid(row=7,column=1)
           CTkButton(tframe3,text="confirm",command=cancel_carservice,height=30,font=("Arial", 16,"bold")).grid(row=8,column=1,pady=5)
           
-          CTkLabel(root,text='',image=namelogo_img).pack(side='bottom')
-          back_btn=CTkButton(root,text="<--",command=signin,font=("Arial", 20,"bold")).pack(side='top',anchor='nw')
-          exit_btn=CTkButton(tframe3,text="Exit",command=destroy,height=40,font=("Arial", 20,"bold")).grid(row=9,column=1,pady=50)
+          CTkLabel(root,text='',image=namelogo_img).place(relx=0.5, rely=1.0, anchor='s')
+          back_btn=CTkButton(root,text="<--",command=signin,font=("Arial", 20,"bold")).place(anchor='nw')
+          CTkLabel(tframe3,text=" ",fg_color="transparent").grid(row=9,column=1)
+          search_price=CTkEntry(tframe3,placeholder_text="Search a Car's Price",height=40,border_width=2,border_color="green")
+          search_price.grid(row=10,column=1,pady=5)
+          CTkButton(tframe3,command=search,text="Search").grid(row=11,column=1,pady=5)
+          
+          exit_btn=CTkButton(tframe3,text="Exit",command=destroy,height=40,font=("Arial", 20,"bold"),fg_color='#990000',hover_color="#670101").grid(row=12,column=1,pady=50)
           
      else:
           messagebox.showinfo("Error","Incorrect Phone Number,Email or Password")
@@ -1211,8 +1241,8 @@ def signin():
      e2=CTkEntry(fr,show='*')
      e2.grid(column=0,row=3,columnspan=2,padx=5,pady=5,sticky='wne')
 
-     b1=CTkButton(fr,text="Sign In",command=sub).grid(column=0,row=4,sticky='n',padx=5)
-     b2=CTkButton(fr,text="Exit",command=destroy).grid(column=1,row=4,sticky='n',padx=5)
+     b1=CTkButton(fr,text="Sign In",command=sub,font=("Arial", 16,"bold")).grid(column=0,row=4,sticky='n',padx=5)
+     b2=CTkButton(fr,text="Exit",command=destroy,font=("Arial", 16,"bold"),fg_color='#990000',hover_color="#670101").grid(column=1,row=4,sticky='n',padx=5)
      
      signup=CTkButton(fre,text="Create an Account",command=creation,fg_color="transparent",font=('Arial',13,'underline'))
      signup.place(anchor='center',relx=0.5,rely=0.8)
