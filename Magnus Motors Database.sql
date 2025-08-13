@@ -42,7 +42,7 @@ CREATE TABLE `car_purchase` (
 
 LOCK TABLES `car_purchase` WRITE;
 /*!40000 ALTER TABLE `car_purchase` DISABLE KEYS */;
-INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000),(3,'6282182971','Swift','Red','Mid','Net Banking',760000),(4,'9400627033','Thar Roxx','White','Top','EMI',2000000),(5,'9400627033','i20','Black','Top','Net Banking',1500000),(6,'6282182971','Jimny','Blue','Mid','Debit Card',1400000);
+INSERT INTO `car_purchase` VALUES (1,'6282182971','Slavia','Blue','Top','EMI',2000000),(2,'6282182971','XUV 700','Black','Top','Net Banking',2400000),(3,'6282182971','Swift','Red','Mid','Net Banking',760000),(5,'9400627033','i20','Black','Top','Net Banking',1500000),(6,'6282182971','Jimny','Blue','Mid','Debit Card',1400000),(7,'6282182971','Brezza','Black','Mid','Net Banking',1270000),(8,'6282182971','Virtus','Black','Top','Net Banking',2000000);
 /*!40000 ALTER TABLE `car_purchase` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,255 +106,31 @@ INSERT INTO `car_test` VALUES (1,'6282182971','i20','hyundai','11:00','2025-08-1
 UNLOCK TABLES;
 
 --
--- Table structure for table `citroen`
+-- Table structure for table `cars`
 --
 
-DROP TABLE IF EXISTS `citroen`;
+DROP TABLE IF EXISTS `cars`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `citroen` (
+CREATE TABLE `cars` (
   `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
+  `company` varchar(50) DEFAULT NULL,
+  `car` varchar(45) NOT NULL,
+  `price1` int DEFAULT NULL,
+  `price2` int DEFAULT NULL,
+  `price3` int DEFAULT NULL,
+  PRIMARY KEY (`Car_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `citroen`
+-- Dumping data for table `cars`
 --
 
-LOCK TABLES `citroen` WRITE;
-/*!40000 ALTER TABLE `citroen` DISABLE KEYS */;
-INSERT INTO `citroen` VALUES (1,'C3',800000,900000,1000000),(2,'C5',1200000,1250000,1370000),(3,'Aircross',1100000,1200000,1250000),(4,'Basalt',1000000,1100000,1200000),(5,'eC3',1000000,1100000,1200000);
-/*!40000 ALTER TABLE `citroen` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `honda`
---
-
-DROP TABLE IF EXISTS `honda`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `honda` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `honda`
---
-
-LOCK TABLES `honda` WRITE;
-/*!40000 ALTER TABLE `honda` DISABLE KEYS */;
-INSERT INTO `honda` VALUES (1,'City',1500000,1700000,2000000),(2,'Amaze',900000,1100000,1280000),(3,'Elevate',1300000,1450000,1600000);
-/*!40000 ALTER TABLE `honda` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `hyundai`
---
-
-DROP TABLE IF EXISTS `hyundai`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hyundai` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `hyundai`
---
-
-LOCK TABLES `hyundai` WRITE;
-/*!40000 ALTER TABLE `hyundai` DISABLE KEYS */;
-INSERT INTO `hyundai` VALUES (1,'Alcazar',2500000,2700000,2780000),(2,'Creta',1400000,1600000,1700000),(3,'Exter',800000,900000,1100000),(4,'Ioniq',2500000,2600000,2800000),(5,'Verna',1600000,1800000,2000000),(6,'Venue',1200000,1300000,1400000),(7,'Tcson',2500000,2700000,2900000),(8,'Aura',1000000,1100000,1150000),(9,'i10',900000,950000,1000000),(10,'i20',1200000,1300000,1500000);
-/*!40000 ALTER TABLE `hyundai` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `kia`
---
-
-DROP TABLE IF EXISTS `kia`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `kia` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `kia`
---
-
-LOCK TABLES `kia` WRITE;
-/*!40000 ALTER TABLE `kia` DISABLE KEYS */;
-INSERT INTO `kia` VALUES (1,'Carnival',2500000,2800000,3000000),(2,'Seltos',1400000,1600000,1700000),(3,'Sonet',1100000,1200000,1400000),(4,'Carens',1300000,1500000,1700000),(5,'EV 6',2000000,2500000,2900000),(6,'EV 9',3200000,3800000,4000000),(7,'Carens Clavis',1400000,1700000,2000000);
-/*!40000 ALTER TABLE `kia` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `mahindra`
---
-
-DROP TABLE IF EXISTS `mahindra`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `mahindra` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `mahindra`
---
-
-LOCK TABLES `mahindra` WRITE;
-/*!40000 ALTER TABLE `mahindra` DISABLE KEYS */;
-INSERT INTO `mahindra` VALUES (1,'BE 6',2500000,2600000,2800000),(2,'XEV 9e',2300000,2400000,2700000),(3,'XUV 400',1400000,1450000,1500000),(4,'XUV 3XO',1000000,1200000,1300000),(5,'XUV 700',2000000,2200000,2400000),(6,'Bolero',1300000,1500000,1600000),(7,'Scorpio',2000000,2300000,2500000),(8,'Thar',1500000,1600000,1800000),(9,'Thar Roxx',1600000,1800000,2000000),(10,'Bolero neo',1400000,1600000,1800000),(11,'Scorpio N',2100000,2300000,2800000);
-/*!40000 ALTER TABLE `mahindra` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `skoda`
---
-
-DROP TABLE IF EXISTS `skoda`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `skoda` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `skoda`
---
-
-LOCK TABLES `skoda` WRITE;
-/*!40000 ALTER TABLE `skoda` DISABLE KEYS */;
-INSERT INTO `skoda` VALUES (1,'Kushaq',1100000,1200000,1400000),(2,'Slavia',1500000,1800000,2000000),(3,'Kodiaq',4500000,4800000,5200000),(4,'Kylaq',850000,970000,1100000);
-/*!40000 ALTER TABLE `skoda` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `suzuki`
---
-
-DROP TABLE IF EXISTS `suzuki`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `suzuki` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `car_no_UNIQUE` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `suzuki`
---
-
-LOCK TABLES `suzuki` WRITE;
-/*!40000 ALTER TABLE `suzuki` DISABLE KEYS */;
-INSERT INTO `suzuki` VALUES (1,'Ignis',800000,870000,900000),(2,'Swift',700000,760000,800000),(3,'Dzire',600000,650000,700000),(4,'Fronx',950000,1000000,1150000),(5,'Brezza',1200000,1270000,1350000),(6,'Grand Vitara',1500000,1700000,2000000),(7,'Espresso',500000,550000,600000),(8,'Celerio',400000,450000,500000),(9,'Alto',350000,400000,470000),(10,'Baleno',850000,900000,1000000),(11,'Ertiga',1100000,1200000,1250000),(12,'XL6',1400000,1500000,1700000),(13,'Invicto',2200000,2400000,2600000),(15,'WagonR',540000,600000,650000),(16,'Jimny',1300000,1400000,1500000),(17,'Eeco',500000,570000,640000);
-/*!40000 ALTER TABLE `suzuki` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tata`
---
-
-DROP TABLE IF EXISTS `tata`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tata` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `car_no_UNIQUE` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tata`
---
-
-LOCK TABLES `tata` WRITE;
-/*!40000 ALTER TABLE `tata` DISABLE KEYS */;
-INSERT INTO `tata` VALUES (1,'Nexon',1200000,1300000,1400000),(2,'Altroz',800000,850000,900000),(3,'Harrier',1500000,1700000,2000000),(4,'Safari',1700000,2000000,2300000),(5,'Punch',700000,800000,880000),(6,'Tiago',600000,650000,700000),(7,'Tigor',650000,700000,770000),(8,'Harrier.ev',1900000,2200000,2500000),(9,'Punch.ev',850000,900000,1000000),(10,'Nexon.ev',1400000,1600000,1700000),(11,'Tiago.ev',1100000,1200000,1260000),(12,'Tigor.ev',1000000,1050000,1100000),(13,'Cruvv.ev',1500000,1800000,2200000);
-/*!40000 ALTER TABLE `tata` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `toyota`
---
-
-DROP TABLE IF EXISTS `toyota`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `toyota` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `toyota`
---
-
-LOCK TABLES `toyota` WRITE;
-/*!40000 ALTER TABLE `toyota` DISABLE KEYS */;
-INSERT INTO `toyota` VALUES (1,'Urban Cruiser Hyryder',1400000,1600000,1900000),(2,'Innova Hycross',2200000,2500000,2800000),(3,'Fortuner',4000000,4500000,5000000),(4,'Fortuner Legender',5500000,5800000,6000000),(5,'Glanza',900000,1000000,1100000),(6,'Vellfire',12000000,15000000,18000000),(7,'Hilux',3000000,3500000,3700000),(8,'Innova Crysta',1900000,2300000,2700000),(9,'Land Cruiser',23000000,25000000,30000000);
-/*!40000 ALTER TABLE `toyota` ENABLE KEYS */;
+LOCK TABLES `cars` WRITE;
+/*!40000 ALTER TABLE `cars` DISABLE KEYS */;
+INSERT INTO `cars` VALUES (1,'Citroen','C3',800000,900000,1000000),(2,'Citroen','C5',1200000,1250000,1370000),(3,'Citroen','Aircross',1100000,1200000,1250000),(4,'Citroen','Basalt',1000000,1100000,1200000),(5,'Citroen','eC3',1000000,1100000,1200000),(6,'Honda','City',1500000,1700000,2000000),(7,'Honda','Amaze',900000,1100000,1280000),(8,'Honda','Elevate',1300000,1450000,1600000),(9,'Hyundai','Alcazar',2500000,2700000,2780000),(10,'Hyundai','Creta',1400000,1600000,1700000),(11,'Hyundai','Exter',800000,900000,1100000),(12,'Hyundai','Ioniq',2500000,2600000,2800000),(13,'Hyundai','Verna',1600000,1800000,2000000),(14,'Hyundai','Venue',1200000,1300000,1400000),(15,'Hyundai','Tcson',2500000,2700000,2900000),(16,'Hyundai','Aura',1000000,1100000,1150000),(17,'Hyundai','i10',900000,950000,1000000),(18,'Hyundai','i20',1200000,1300000,1500000),(19,'Kia','Carnival',2500000,2800000,3000000),(20,'Kia','Seltos',1400000,1600000,1700000),(21,'Kia','Sonet',1100000,1200000,1400000),(22,'Kia','Carens',1300000,1500000,1700000),(23,'Kia','EV 6',2000000,2500000,2900000),(24,'Kia','EV 9',3200000,3800000,4000000),(25,'Kia','Carens Clavis',1400000,1700000,2000000),(26,'Mahindra','BE 6',2500000,2600000,2800000),(27,'Mahindra','XEV 9e',2300000,2400000,2700000),(28,'Mahindra','XUV 400',1400000,1450000,1500000),(29,'Mahindra','XUV 3XO',1000000,1200000,1300000),(30,'Mahindra','XUV 700',2000000,2200000,2400000),(31,'Mahindra','Bolero',1300000,1500000,1600000),(32,'Mahindra','Scorpio',2000000,2300000,2500000),(33,'Mahindra','Thar',1500000,1600000,1800000),(34,'Mahindra','Thar Roxx',1600000,1800000,2000000),(35,'Mahindra','Bolero neo',1400000,1600000,1800000),(36,'Mahindra','Scorpio N',2100000,2300000,2800000),(37,'Skoda','Kushaq',1100000,1200000,1400000),(38,'Skoda','Slavia',1500000,1800000,2000000),(39,'Skoda','Kodiaq',4500000,4800000,5200000),(40,'Skoda','Kylaq',850000,970000,1100000),(41,'Suzuki','Ignis',800000,870000,900000),(42,'Suzuki','Swift',700000,760000,800000),(43,'Suzuki','Dzire',600000,650000,700000),(44,'Suzuki','Fronx',950000,1000000,1150000),(45,'Suzuki','Brezza',1200000,1270000,1350000),(46,'Suzuki','Grand Vitara',1500000,1700000,2000000),(47,'Suzuki','Espresso',500000,550000,600000),(48,'Suzuki','Celerio',400000,450000,500000),(49,'Suzuki','Alto',350000,400000,470000),(50,'Suzuki','Baleno',850000,900000,1000000),(51,'Suzuki','Ertiga',1100000,1200000,1250000),(52,'Suzuki','XL6',1400000,1500000,1700000),(53,'Suzuki','Invicto',2200000,2400000,2600000),(54,'Suzuki','WagonR',540000,600000,650000),(55,'Suzuki','Jimny',1350000,1400000,1500000),(57,'Tata','Nexon',1200000,1300000,1400000),(58,'Tata','Altroz',800000,850000,900000),(59,'Tata','Harrier',1500000,1700000,2000000),(60,'Tata','Safari',1700000,2000000,2300000),(61,'Tata','Punch',700000,800000,880000),(62,'Tata','Tiago',600000,650000,700000),(63,'Tata','Tigor',650000,700000,770000),(64,'Tata','Harrier.ev',1900000,2200000,2500000),(65,'Tata','Punch.ev',850000,900000,1000000),(66,'Tata','Nexon.ev',1400000,1600000,1700000),(67,'Tata','Tiago.ev',1100000,1200000,1260000),(68,'Tata','Tigor.ev',1000000,1050000,1100000),(69,'Tata','Cruvv.ev',1500000,1800000,2200000),(70,'Toyota','Urban Cruiser Hyryder',1400000,1600000,1900000),(71,'Toyota','Innova Hycross',2200000,2500000,2800000),(72,'Toyota','Fortuner',4000000,4500000,5000000),(73,'Toyota','Fortuner Legender',5500000,5800000,6000000),(74,'Toyota','Glanza',900000,1000000,1100000),(75,'Toyota','Vellfire',12000000,15000000,18000000),(76,'Toyota','Hilux',3000000,3500000,3700000),(77,'Toyota','Innova Crysta',1900000,2300000,2700000),(78,'Toyota','Land Cruiser',23000000,25000000,30000000),(79,'Volkswagen','Virtus',1500000,1700000,2000000),(80,'Volkswagen','Taigun',1300000,1400000,1600000),(81,'Volkswagen','Golf GTI',5300000,5500000,5600000),(82,'Volkswagen','Tiguan',3500000,3800000,4000000),(83,'Suzuki','Eeco',500000,540000,600000);
+/*!40000 ALTER TABLE `cars` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -385,34 +161,6 @@ LOCK TABLES `user` WRITE;
 INSERT INTO `user` VALUES ('0','admin','admin','user',NULL,'0','admin@gmail.com'),('6282182971','asher123','Asher','Thomas Viju','Tharayil Pothara','8787654234','asherthomasv@gmail.com'),('9400627033','vaishnav123','Vaishnav','Prasad','112 Bakar street','9430626900','vaishnavprasad@gmail.com');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `volkswagen`
---
-
-DROP TABLE IF EXISTS `volkswagen`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `volkswagen` (
-  `Car_no` int NOT NULL,
-  `Car` varchar(45) NOT NULL,
-  `Price1` int DEFAULT NULL,
-  `Price2` int DEFAULT NULL,
-  `Price3` int DEFAULT NULL,
-  PRIMARY KEY (`Car_no`),
-  UNIQUE KEY `Car_no` (`Car_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `volkswagen`
---
-
-LOCK TABLES `volkswagen` WRITE;
-/*!40000 ALTER TABLE `volkswagen` DISABLE KEYS */;
-INSERT INTO `volkswagen` VALUES (1,'Virtus',1500000,1700000,2000000),(2,'Taigun',1300000,1400000,1600000),(3,'Golf GTI',5300000,5500000,5600000),(4,'Tiguan',3500000,3800000,4000000);
-/*!40000 ALTER TABLE `volkswagen` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -423,4 +171,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-10 12:51:09
+-- Dump completed on 2025-08-13 21:30:21
