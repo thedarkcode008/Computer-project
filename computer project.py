@@ -1123,7 +1123,7 @@ def sub(): #function for receiving phno and pass
           CTkButton(tframe3,text="confirm",command=cancel_carbuy,height=30,font=("Arial", 16,"bold")).grid(row=8,column=0,pady=5)
           
           CTkLabel(tframe3,text='Cancel Test Drive Booking',font=("Arial", 16,"bold")).grid(row=6,column=2,pady=10)
-          test_id_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Tst ID")
+          test_id_entry_cancel=CTkEntry(tframe3,placeholder_text="Enter Test ID")
           test_id_entry_cancel.grid(row=7,column=2)
           CTkButton(tframe3,text="confirm",command=cancel_cartest,height=30,font=("Arial", 16,"bold")).grid(row=8,column=2,pady=5)
           
