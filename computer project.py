@@ -995,93 +995,111 @@ def sub(): #function for receiving phno and pass
                purchase_no=entry_purchase_no.get()
                mycur.execute("SELECT * FROM car_purchase where Purchase_no={}".format(purchase_no))
                row=mycur.fetchone()
-               phno=row[1]
                userphno=my_var.get()
-               if userphno==phno:
-                    car_name=row[2]
-                    color=row[3]
-                    variant=row[4]
-                    price=row[6]
-                    payment=row[5]
-                    summary = f"""
-                    Here is the information
-                    Vehicle: {car_name}
-                    Color: {color}
-                    Variant: {variant}
-                    Price: ₹{price}
-                    Payment Method: {payment}
-                    """             
-                    messagebox.showinfo("Booking info",summary)
-               else:
+               if row is None:
                     messagebox.showerror("Error","Invalid purchase number")
+               else:
+                    phno=row[1]
+                    if userphno==phno:
+                         car_name=row[2]
+                         color=row[3]
+                         variant=row[4]
+                         price=row[6]
+                         payment=row[5]
+                         summary = f"""
+                         Here is the information
+                         Vehicle: {car_name}
+                         Color: {color}
+                         Variant: {variant}
+                         Price: ₹{price}
+                         Payment Method: {payment}
+                         """             
+                         messagebox.showinfo("Booking info",summary)
+                    else:
+                         messagebox.showerror("Error","Invalid purchase number")
                entry_purchase_no.delete(0,'end')
           def msgbox2():
                test_id=entry_test_id.get()
                mycur.execute("SELECT * FROM car_test where Test_id={}".format(test_id))
                row=mycur.fetchone()
-               phno=row[1]
                userphno=my_var.get()
-               if userphno==phno:
-                    car_name=row[2]
-                    company=row[3]
-                    time=row[4]
-                    date=row[5]
-                    summary = f"""
-                    Here is the information
-                    Vehicle: {car_name}
-                    Company: {company}
-                    Time: {time}
-                    Date: {date}
-                    """             
-                    messagebox.showinfo("Booking info",summary)
+               if row is None:
+                    messagebox.showerror("Error","Invalid purchase number")
                else:
-                    messagebox.showerror("Error","Invalid Test ID")
+                    phno=row[1]
+                    if userphno==phno:
+                         car_name=row[2]
+                         company=row[3]
+                         time=row[4]
+                         date=row[5]
+                         summary = f"""
+                         Here is the information
+                         Vehicle: {car_name}
+                         Company: {company}
+                         Time: {time}
+                         Date: {date}
+                         """             
+                         messagebox.showinfo("Booking info",summary)
+                    else:
+                         messagebox.showerror("Error","Invalid Test ID")
                entry_test_id.delete(0,'end')
           
           def cancel_carbuy():
-               phno=my_var.get()
+               userphno=my_var.get()
                purchase_no=purchase_no_entry_cancel.get()
                mycur.execute("SELECT phno FROM car_purchase where Purchase_no={}".format(purchase_no))
                row=mycur.fetchone()
-               if row[0]==phno:
-                    response=messagebox.askokcancel("Cancel purchase?","Are You Sure")
-                    if response:
-                         mycur.execute("DELETE FROM car_purchase WHERE Purchase_no={}".format(purchase_no))
-                    else:
-                         messagebox.showerror("Error","Purchase not cancelled")
-                    purchase_no_entry_cancel.delete(0,'end')
+               if row is None:
+                    messagebox.showerror("Error","Invalid purchase number")
                else:
-                    messagebox.showerror("Error","Purchase_no not valid")
+                    phno=row[0]
+                    if phno==userphno:
+                         response=messagebox.askokcancel("Cancel purchase?","Are You Sure")
+                         if response:
+                              mycur.execute("DELETE FROM car_purchase WHERE Purchase_no={}".format(purchase_no))
+                         else:
+                              messagebox.showerror("Error","Purchase not cancelled")
+                         purchase_no_entry_cancel.delete(0,'end')
+                    else:
+                         messagebox.showerror("Error","Purchase_no not valid")
                     
           def cancel_cartest():
-               phno=my_var.get()
+               userphno=my_var.get()
                test_id=test_id_entry_cancel.get()
                mycur.execute("SELECT phno FROM car_test where Test_id={}".format(test_id))
                row=mycur.fetchone()
-               if row[0]==phno:
-                    response=messagebox.askokcancel("Cancel Test Drive?","Are You Sure")
-                    if response:
-                         mycur.execute("DELETE FROM car_test WHERE Test_id={}".format(test_id))
-                    else:
-                         messagebox.showerror("Error","Test Drive not cancelled")
-                    test_id_entry_cancel.delete(0,'end')
+               if row is None:
+                    messagebox.showerror("Error","Invalid purchase number")
                else:
-                    messagebox.showerror("Error","Test ID Not Valid")
+                    phno=row[0]
+                    if phno==userphno:
+                         response=messagebox.askokcancel("Cancel Test Drive?","Are You Sure")
+                         if response:
+                              mycur.execute("DELETE FROM car_test WHERE Test_id={}".format(test_id))
+                         else:
+                              messagebox.showerror("Error","Test Drive not cancelled")
+                         test_id_entry_cancel.delete(0,'end')
+                    else:
+                         messagebox.showerror("Error","Test ID Not Valid")
                     
           def cancel_carservice():
-               phno=my_var.get()
+               userphno=my_var.get()
                service_id=service_id_entry_cancel.get()
                mycur.execute("SELECT phno FROM car_service where service_id={}".format(service_id))
                row=mycur.fetchone()
-               if row[0]==phno:
-                    response=messagebox.askokcancel("Cancel service?","Are You Sure")
-                    if response:
-                         mycur.execute("DELETE FROM car_service WHERE service_id={}".format(service_id))
-                    else:
-                         messagebox.showerror("Error","service not cancelled")
-                    service_id_entry_cancel.delete(0,'end')
+               if row is None:
+                    messagebox.showerror("Error","Invalid purchase number")
                else:
-                    messagebox.showerror("Error","Service ID Not Valid")
+                    phno=row[0]
+                    if phno==userphno:
+                         response=messagebox.askokcancel("Cancel service?","Are You Sure")
+                         if response:
+                              mycur.execute("DELETE FROM car_service WHERE service_id={}".format(service_id))
+                         else:
+                              messagebox.showerror("Error","service not cancelled")
+                         service_id_entry_cancel.delete(0,'end')
+                    else:
+                         messagebox.showerror("Error","Service ID Not Valid")
           
           def search():
                car_name=search_price.get()
@@ -1103,7 +1121,6 @@ def sub(): #function for receiving phno and pass
           
           carbuy=CTkButton(tframe3,text="Buy a Car",command=buycar,height=40,font=("Arial", 16,"bold")).grid(row=1,column=0)
           CTkLabel(tframe3,text="  ",fg_color="transparent").grid(row=2,column=1)
-          
           seecarbook=CTkButton(tframe3,text="See Booked Cars",command=msgbox1,height=30,font=("Arial", 16,"bold")).grid(row=4,column=0,pady=5)
           entry_purchase_no=CTkEntry(tframe3,placeholder_text="Enter Purchase No.")
           entry_purchase_no.grid(row=3,column=0,pady=5)
